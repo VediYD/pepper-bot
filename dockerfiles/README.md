@@ -19,10 +19,11 @@ This will create a Docker image with the Pepper Bot application and all dependen
 To run Pepper Bot, you can start a container using the Docker image:
 
 ```
-docker run -it pepper-bot-dev:latest
+docker run -p 8888:8888 -v /path/to/notebooks:/app pepper-bot-dev:latest
 ```
+NOTE: A notebook has also been added to the project root for testing. 
 
-This will start a container with the Pepper Bot application running. From there, you can start a python terminal and [run commands](http://doc.aldebaran.com/2-1/dev/python/tutorials.html).
+This will start a container with the jupyter notebook running. From there, you can open it in the browser by copying the url presented [run commands](http://doc.aldebaran.com/2-1/dev/python/tutorials.html).
 
 ## Jupyter Version
 In the future, we plan to release a Jupyter version of the Pepper Bot Docker image. Stay tuned for more information!
