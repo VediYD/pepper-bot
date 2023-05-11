@@ -9,9 +9,9 @@ Given below is version information,
 To use this image, you'll need to have Docker installed on your machine. Once you have Docker installed, you can build the Docker image using the provided Dockerfile. 
 
 ```
-docker build -t pepper-bot-dev:latest .
+docker build -t pepper-bot-dev:latest -f Dockerfile.01 .
 ```
-
+NOTE: make sure to run this command from `pepper-bot/dockerfiles/` folder. Or if youre in the project root pass `-f dockerfiles/Dockerfile.01`. From outside the repository pass the full path `-f /full/path/to/Dockerfile.01` 
 This will create a Docker image with the Pepper Bot application and all dependencies.
 
 ## Usage
