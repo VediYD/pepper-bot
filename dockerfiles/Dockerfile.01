@@ -1,5 +1,7 @@
 FROM python:2.7
 
+USER root
+
 RUN wget https://community-static.aldebaran.com/resources/2.5.10/Python%20SDK/pynaoqi-python2.7-2.5.7.1-linux64.tar.gz
 
 RUN tar -xzf pynaoqi-python2.7-2.5.7.1-linux64.tar.gz -C / \
@@ -10,9 +12,9 @@ ENV PYTHONPATH=${PYTHONPATH}:/pynaoqi-python2.7-2.5.7.1-linux64
 
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/pynaoqi-python2.7-2.5.7.1-linux64
 
-RUN pip install jupyter
+RUN pip install jupyter jupyterlab flask
 EXPOSE 8888
 
 WORKDIR /app
 
-CMD ["jupyter", "notebook", "--ip", "0.0.0.0", "--no-browser", "--allow-root"]
+CMD ["jupyter", "lab", "--ip", "0.0.0.0", "--no-browser", "--allow-root", "--NotebookApp.token=pepperdev"]
