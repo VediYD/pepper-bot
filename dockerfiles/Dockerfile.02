@@ -4,13 +4,9 @@ USER root
 
 WORKDIR /app
 
-RUN pip install gpt4all
-RUN pip install langchain
-RUN apt-get update -y && apt install build-essential
-RUN pip install chromadb
-RUN pip install llama-cpp-python
+RUN apt-get update && apt install build-essential -y
 
-#RUN wget https://gpt4all.io/models/ggml-gpt4all-j-v1.3-groovy.bin
+RUN pip install -r requirements3.txt
 
 EXPOSE 8888
 
