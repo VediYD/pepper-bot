@@ -2,7 +2,7 @@ from flask import Flask, request
 from naoqi import ALProxy
 
 app = Flask(__name__)
-speech_proxy = ALProxy("ALTextToSpeech", "192.168.0.192", 9559)
+speech_proxy = ALProxy("ALTextToSpeech", "10.104.23.217", 9559)
 
 
 @app.route('/say', methods=['POST'])
