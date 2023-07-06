@@ -26,8 +26,10 @@ def record_audio():
         action = request.form.get("action")
 
         if action == "start":
+            
             # Set the output file path
             output_file = "recorded_audio.wav"
+            
             # Set the audio format
             sample_rate = 16000
             channels = [0, 0, 1, 0]  # Record only from the front microphones
