@@ -3,21 +3,22 @@ import speech_recognition as sr
 
 app = Flask(__name__)
 
+import speech_recognition as sr
+
 def convert_wav_to_text(audio_path):
     r = sr.Recognizer()
-
-    # Load audio file
-    with sr.WavFile(audio_path) as source:
-        audio = r.record(source)
-
-    # Convert audio to text
+    with sr.AudioFile(audio_path) as source:
+        audio_data = r.record(source)
     try:
-        text = sr.recognize_google(audio)
+        text = r.recognize_google(audio_data)
         return text
     except sr.UnknownValueError:
         return "Speech recognition could not understand audio"
     except sr.RequestError as e:
-        return "Could not request results from Google Speech Recognition service; {0}".format(e)
+        return "Could not request results from Google Speech Recognition service: " + str(e)
+    except Exception as e:
+        return "An error occurred during speech recognition: " + str(e)
+
 
 @app.route('/convert', methods=['POST'])
 def convert_audio():
