@@ -1,0 +1,4 @@
+gpt4all
+langchain
+chromadb
+sentence_transformers

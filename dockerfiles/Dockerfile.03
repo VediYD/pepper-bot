@@ -1,0 +1,29 @@
+FROM python:2.7 as python2
+
+RUN wget https://community-static.aldebaran.com/resources/2.5.10/Python%20SDK/pynaoqi-python2.7-2.5.7.1-linux64.tar.gz
+
+RUN tar -xzf pynaoqi-python2.7-2.5.7.1-linux64.tar.gz -C / \
+    && rm pynaoqi-python2.7-2.5.7.1-linux64.tar.gz
+
+ENV PYTHONPATH=${PYTHONPATH}:/pynaoqi-python2.7-2.5.7.1-linux64/lib/python2.7/site-packages
+ENV PYTHONPATH=${PYTHONPATH}:/pynaoqi-python2.7-2.5.7.1-linux64
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/pynaoqi-python2.7-2.5.7.1-linux64
+
+FROM jupyter/base-notebook:latest
+
+USER root
+
+WORKDIR /app
+
+RUN pip install gpt4all
+
+COPY --from=python2 /usr/local/lib/python2.7/site-packages /usr/local/lib/python2.7/site-packages
+COPY --from=python2 /usr/bin/python2.7 /usr/local/bin/python2.7
+
+EXPOSE 8888
+
+ENV PYTHONPATH=${PYTHONPATH}:/pynaoqi-python2.7-2.5.7.1-linux64/lib/python2.7/site-packages
+ENV PYTHONPATH=${PYTHONPATH}:/pynaoqi-python2.7-2.5.7.1-linux64
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/pynaoqi-python2.7-2.5.7.1-linux64
+
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=pepperdev"]
