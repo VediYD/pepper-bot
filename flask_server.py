@@ -210,6 +210,11 @@ def say_something():
     speech_proxy.say(str(data['message']))
     return 'OK'
 
+@app.route('/stopSay', methods=['POST'])
+def stop_say():
+    speech_proxy.stopAll()
+    return 'OK'
+
 @app.route('/listen', methods=['POST'])
 def listen():
     record_audio_sd(timer=15, debug=False)
