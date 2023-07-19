@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text and Image Example</title>
+</head>
+<body>
+    <h1>Text and Image Example</h1>
+    <img src="../qr_codes/image.png">
+
+    <div id="text-container">
+        <p id="text-content"></p>
+    </div>
+
+    <script>
+        // Fetch the text file
+        fetch('text.txt')
+            .then(response => response.text())
+            .then(text => {
+                const textContent = document.getElementById('text-content');
+                textContent.textContent = text;
+            })
+            .catch(error => {
+                console.log('Error:', error);
+            });
+    </script>
+</body>
+</html>
