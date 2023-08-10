@@ -151,6 +151,7 @@ def subCourseText(subText):
 # relevant for course templates: "basicQRPage.html", "topBannerQRPage.html"
 def subLocationText(subText):
     """text sub for specific types: location text"""
+    tempText = id_df.loc[id_df["ID"] == subText]["locationText"]
     tempText = "replaceLocationText"
     textSub(tempText, subText)
 
