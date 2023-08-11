@@ -1,3 +1,23 @@
+### Custom File Handing Imports ###
+from fileTransfer import *
+
+### Custom Idle Behaviour Imports ###
+from idle import *
+
+### Custom Page Display Imports ###
+from displayGeneration import *
+
+### Custom Interaction, Behaviour and Display Imports ###
+from interactiveControls import *
+
+### Custom Hard-Coded Prompt Imports ###
+from prompts import *
+
+### Main Interaction Imports ###
+from humanInteraction import *
+
+import constants
+
 ################################################################################
 ##### SFTP File Transfer Functions
 ##########
@@ -27,14 +47,14 @@
 #     sftp.close()
 #     ssh.close()
 
-def sendFromPepper(pepperSourceFile=PEPPER_RECORDINGS_PATH, serverLandingFile=SERVER_RECORDINGS_PATH):
+def sendFromPepper(pepperSourceFile=constants.PEPPER_RECORDINGS_PATH, serverLandingFile=constants.SERVER_RECORDINGS_PATH):
     """Get files from Pepper on local (server) machine"""
     ssh, sftp = setupSFTP()
     sftp.get(pepperSourceFile, serverLandingFile)
     closeSFTP(ssh, sftp)
     print("Sent from Pepper")
 
-def sendToPepper(serverSourceFile=SERVER_RECORDINGS_PATH, pepperLandingFile=PEPPER_RECORDINGS_PATH):
+def sendToPepper(serverSourceFile=constants.SERVER_RECORDINGS_PATH, pepperLandingFile=constants.PEPPER_RECORDINGS_PATH):
     """Send files from local (server) machine to Pepper"""
     ssh, sftp = setupSFTP()
     sftp.put(serverSourceFile, pepperLandingFile)

@@ -1,3 +1,23 @@
+### Custom File Handing Imports ###
+from fileTransfer import *
+
+### Custom Idle Behaviour Imports ###
+from idle import *
+
+### Custom Page Display Imports ###
+from displayGeneration import *
+
+### Custom Interaction, Behaviour and Display Imports ###
+from interactiveControls import *
+
+### Custom Hard-Coded Prompt Imports ###
+from prompts import *
+
+### Main Interaction Imports ###
+from humanInteraction import *
+
+import constants
+
 ################################################################################
 ##### File Setup
 ##########
@@ -15,12 +35,12 @@
 ### File Mapping
 #PEPPER_HOST = "10.104.23.185"
 #PEPPER_PORT = "9559"
-#FILE_NAME_TEMP = "display.html"
+#constants.FILE_NAME_TEMP = "display.html"
 #PEPPER_HTML_PATH = "/home/nao/.local/share/PackageManager/apps/robot-page/html/"  # page.html"
-#PEPPER_PAGE_LANDING = PEPPER_HTML_PATH + "page.html"
-#PEPPER_QR_LANDING = PEPPER_HTML_PATH + "webfiles/qr.png"  # switched slash direction
-#PEPPER_IMG_LANDING = PEPPER_HTML_PATH + "webfiles/img.png"  # switched slash direction
-#TEXT_BY_ID_PATH = "pages/textbyID.csv"
+#constants.PEPPER_PAGE_LANDING = PEPPER_HTML_PATH + "page.html"
+#constants.PEPPER_QR_LANDING = PEPPER_HTML_PATH + "webfiles/qr.png"  # switched slash direction
+#constants.PEPPER_IMG_LANDING = PEPPER_HTML_PATH + "webfiles/img.png"  # switched slash direction
+#constants.TEXT_BY_ID_PATH = "pages/textbyID.csv"
 
 
 ###
@@ -52,7 +72,7 @@ def duplicateTemplate(type):
     template = "pageTemplates/" + type  # "basicQRPage.html"
     # fileName = "display.html"
     try:
-        shutil.copyfile(template, FILE_NAME_TEMP)
+        shutil.copyfile(template, constants.FILE_NAME_TEMP)
         pepperLog("copyfile successful")
     except:
         pepperLog("copyfile exception occurred")
@@ -65,7 +85,7 @@ def duplicateTemplate(type):
 def seekCourseName(ID):
     """find CourseName by ID in library"""
     try:
-        data = pd.read_csv(TEXT_BY_ID_PATH)
+        data = pd.read_csv(constants.TEXT_BY_ID_PATH)
         text = data.loc[data["ID"] == ID]
         courseName = text.iloc[0]["CourseName"]
     except: 
@@ -76,7 +96,7 @@ def seekCourseName(ID):
 def seekLocationText(ID):
     """find LocationText by ID in library"""
     try:
-        data = pd.read_csv(TEXT_BY_ID_PATH)
+        data = pd.read_csv(constants.TEXT_BY_ID_PATH)
         text = data.loc[data["ID"] == ID]
         locationText = text.iloc[0]["locationText"]
     except: 
@@ -97,7 +117,7 @@ def seekBodyText(ID):
 def seekCourseAndLocationText(ID):
     """find both CourseName and LocationText by ID in library"""
     try:
-        data = pd.read_csv(TEXT_BY_ID_PATH)
+        data = pd.read_csv(constants.TEXT_BY_ID_PATH)
         text = data.loc[data["ID"] == ID]
         courseName = text.iloc[0]["CourseName"]
         locationText = text.iloc[0]["locationText"]
@@ -118,9 +138,9 @@ def textSub(tempText, subText):
     textToPaste = subText  # "the replacement text"
     # fileName = "display.html"
 
-    tempFile = open(FILE_NAME_TEMP, "r+")
+    tempFile = open(constants.FILE_NAME_TEMP, "r+")
     matchSuccess = False
-    for line in fileinput.input(FILE_NAME_TEMP):
+    for line in fileinput.input(constants.FILE_NAME_TEMP):
         if textToCut in line:
             matchSuccess = True
             tempFile.write(line.replace(textToCut, textToPaste))
@@ -152,7 +172,7 @@ def subBodyText(subText):
 # relevant for course templates: "basicQRPage.html", "topBannerQRPage.html"
 def subCourseText(subText):
     """text sub for specific types: course text"""
-    # id_df = pd.read_csv(TEXT_BY_ID_PATH)
+    # id_df = pd.read_csv(constants.TEXT_BY_ID_PATH)
     # tempText = id_df.loc[id_df["ID"] == subText]["CourseName"]
     tempText = "replaceCourseText"
     textSub(tempText, subText)
@@ -189,7 +209,7 @@ def seekQR(ID):
     ### find QR code in library
     pathToQR = "QRCodes/" + ID + ".png"
     ### move QR code to file location as "webfiles\qr.png"
-    sendFileToPepper(pathToQR, PEPPER_QR_LANDING)
+    sendFileToPepper(pathToQR, constants.PEPPER_QR_LANDING)
 
 
 def seekImg(ID):
@@ -197,7 +217,7 @@ def seekImg(ID):
     ### find img in library
     pathToImg = "imgFiles/" + ID + ".png"
     ### move img to file location as "webfiles\img.png"
-    sendFileToPepper(pathToImg, PEPPER_IMG_LANDING)
+    sendFileToPepper(pathToImg, constants.PEPPER_IMG_LANDING)
 
 
 ##########
@@ -219,7 +239,7 @@ def seekImg(ID):
 def sendPage():
     """take display.html and push to live"""
     # to send a file to Pepper, call receive_file(local_path="recordings/recording.wav", remote_path="/home/nao/microphones/recording.wav")
-    sendFileToPepper(FILE_NAME_TEMP, PEPPER_PAGE_LANDING)
+    sendFileToPepper(constants.FILE_NAME_TEMP, constants.PEPPER_PAGE_LANDING)
     showPage()
 
 #def showPage():

@@ -1,3 +1,25 @@
+### Custom File Handing Imports ###
+from fileTransfer import *
+
+### Custom Idle Behaviour Imports ###
+from idle import *
+
+### Custom Page Display Imports ###
+from displayGeneration import *
+
+### Custom Interaction, Behaviour and Display Imports ###
+from interactiveControls import *
+
+### Custom Hard-Coded Prompt Imports ###
+from prompts import *
+
+### Main Interaction Imports ###
+from humanInteraction import *
+
+import prompts
+import constants
+import interactiveControls as ic
+
 ################################################################################
 ##### Function Handles
 ##########
@@ -15,20 +37,20 @@ def listen():
     return text
 
 def speak(text):
-    tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
+    tts = ALProxy("ALTextToSpeech", constants.PEPPER_HOST, constants.PEPPER_PORT)
     tts.say(text)
 
 def shush():
-    tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
+    tts = ALProxy("ALTextToSpeech", constants.PEPPER_HOST, constants.PEPPER_PORT)
     tts.stopAll()
 
-def think(query, responsesPipeline):
+def think(query, responsesPipeline, eyes):
     eyes.start_thinking()
     # show_on_tablet('Demo/pageTemplates/dashLoader.html')
-    showWhichPage("loading")
+    ic.showWhichPage("loading")
     postQuery(query, responsesPipeline) #postQuery(_question, sentences):
     eyes.stop_thinking()
-    resetEyesAndTablet()
+    ic.resetEyesAndTablet()
 
 ################################################################################
 ##### Detect Person
@@ -36,16 +58,16 @@ def think(query, responsesPipeline):
 
 def seePersonAndGreet():
     # Imports
-    memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
-    tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
-    face_detection = ALProxy("ALFaceDetection", PEPPER_HOST, PEPPER_PORT)
+    memory = ALProxy("ALMemory", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    tracker = ALProxy("ALTracker", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    face_detection = ALProxy("ALFaceDetection", constants.PEPPER_HOST, constants.PEPPER_PORT)
 
     face_detection.subscribe("FaceDetection")
     tracker.registerTarget("Face", 0.1)
     tracker.setMode("Head")
     tracker.track("Face")
     tracker.setMaximumDistanceDetection(0.1)
-
+    ic.showWhichPage('prompt')
     is_detected = False
     greeting = ""
     while not is_detected:
@@ -64,6 +86,8 @@ def seePersonAndGreet():
                     break
         speak(greeting)
 
+
+
 def getGreeting():
     """Get greeting from other file as basicGreeting ("Hello, I'm Pepper") + basicTopicPrompts ("Ask me about...")"""
     greeting = random.choice(prompts.basicGreetings) + random.choice(prompts.basicTopicPrompts)
@@ -76,7 +100,7 @@ def getGreeting():
 # ##########
 
 # def speak(text):
-#     tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
+#     tts = ALProxy("ALTextToSpeech", constants.PEPPER_HOST, constants.PEPPER_PORT)
 #     tts.say(text)
 
 
@@ -94,9 +118,9 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
     path_name = os.path.join(path_name)
 
     # Create Connection Proxies
-    recorder = ALProxy("ALAudioRecorder", ip, port)
-    sound_detector = ALProxy("ALSoundDetection", ip, port)
-    memory = ALProxy("ALMemory", ip, port)
+    recorder = ALProxy("ALAudioRecorder", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    sound_detector = ALProxy("ALSoundDetection", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    memory = ALProxy("ALMemory", constants.PEPPER_HOST, constants.PEPPER_PORT)
     
     sound_detector.subscribe("sound_detector")
     sound_detector.setParameter("Sensitivity", 0.9)
@@ -236,5 +260,5 @@ def postQuery(_question, sentences):
     receive_responses(r, sentences)
 
 def stopListening():
-    recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
+    recorder = ALProxy("ALAudioRecorder", constants.PEPPER_HOST, constants.PEPPER_PORT)
     recorder.stopMicrophonesRecording()

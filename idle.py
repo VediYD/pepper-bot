@@ -1,9 +1,31 @@
+from naoqi import ALProxy
+### Custom File Handing Imports ###
+from fileTransfer import *
+
+### Custom Idle Behaviour Imports ###
+from idle import *
+
+### Custom Page Display Imports ###
+from displayGeneration import *
+
+### Custom Interaction, Behaviour and Display Imports ###
+from interactiveControls import *
+
+### Custom Hard-Coded Prompt Imports ###
+from prompts import *
+
+### Main Interaction Imports ###
+from humanInteraction import *
+
+import constants
+
 class idling:
     """While not inConversation, then Pepper should be idle"""
     def __init__(self):
         self.idling = True
-        self.behavior = ALProxy("ALBehaviorManager", PEPPER_HOST, PEPPER_PORT)
-        self.leds = ALProxy("ALLeds", PEPPER_HOST, PEPPER_PORT)
+        self.behavior = ALProxy("ALBehaviorManager", constants.PEPPER_HOST, constants.PEPPER_PORT)
+        self.leds = ALProxy("ALLeds", constants.PEPPER_HOST, constants.PEPPER_PORT)
+        self.idle_thread = threading.Thread(target=self.idle_behavior_thread, args=(self.behaviorList,))
         self.behaviorList = [
             'animations/Stand/Waiting/BackRubs_1', 'animations/Stand/Waiting/FunnyDancer_1', 
             'animations/Stand/Waiting/HideEyes_1', 'animations/Stand/Waiting/HideHands_1', 
@@ -40,7 +62,6 @@ class idling:
 
     def start_idle_behavior(self):
         self.idling = True
-        self.idle_thread = threading.Thread(target=self.idle_behavior_thread, args=(self.behaviorList,))
         self.idle_thread.start()
 
     def stop(self):

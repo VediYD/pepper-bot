@@ -1,10 +1,33 @@
+### Custom File Handing Imports ###
+from fileTransfer import *
+
+### Custom Idle Behaviour Imports ###
+from idle import *
+
+### Custom Page Display Imports ###
+from displayGeneration import *
+
+### Custom Interaction, Behaviour and Display Imports ###
+from interactiveControls import *
+
+### Custom Hard-Coded Prompt Imports ###
+from prompts import *
+
+### Main Interaction Imports ###
+from humanInteraction import *
+
+import fileTransfer as ft
+
+import constants
+
+
 ################################################################################
 ##### Head Tracking Functions
 ##########
 
 def track_head(mode="Head"):
     """find face to target and look towards them until ended"""
-    tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
+    tracker = ALProxy("ALTracker", constants.PEPPER_HOST, constants.PEPPER_PORT)
     tracker.unregisterAllTargets()
     tracker.initialize()
     tracker.registerTarget("Face", 0.05)
@@ -13,7 +36,7 @@ def track_head(mode="Head"):
 
 def stop_track_head():
     """cease track_head()"""
-    tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
+    tracker = ALProxy("ALTracker", constants.PEPPER_HOST, constants.PEPPER_PORT)
     tracker.stopTracker()
     tracker.unregisterAllTargets()
 
@@ -23,12 +46,12 @@ def stop_track_head():
 ##### Eye Colour Functions
 ##########
 
-    def set_leds(color = 'white', ledSet = 'Face'):
+def set_leds(color = 'white', ledSet = 'Face'):
     rgb = None
     if color == "cyan":
         rgb = [0.69, 1, 0.84]
 
-    leds = ALProxy("ALLeds", ip, port)
+    leds = ALProxy("ALLeds", constants.PEPPER_HOST, constants.PEPPER_PORT)
     if rgb is not None:   
         leds.fadeRGB(ledSet + "Leds", rgb[0], rgb[1], rgb[2], 1)
     else:
@@ -38,7 +61,7 @@ def stop_track_head():
 class eyesController():
     def __init__(self):
         # self.thinking = True
-        self.leds = ALProxy("ALLeds", PEPPER_HOST, PEPPER_PORT)
+        self.leds = ALProxy("ALLeds", constants.PEPPER_HOST, constants.PEPPER_PORT)
 
     def thinking_eyes(self):
         while self.thinking:
@@ -62,7 +85,7 @@ class eyesController():
 ##########
 
 def return_to_default_pos(sentences = None):
-    # posture = ALProxy("ALRobotPosture", PEPPER_HOST, PEPPER_PORT)
+    # posture = ALProxy("ALRobotPosture", constants.PEPPER_HOST, constants.PEPPER_PORT)
     resetEyesAndTablet()
     # set_leds()
     stop_track_head()
@@ -71,7 +94,7 @@ def return_to_default_pos(sentences = None):
     # stop_show_on_tablet()
 
 def defaultPosture():
-    posture = ALProxy("ALRobotPosture", PEPPER_HOST, PEPPER_PORT)
+    posture = ALProxy("ALRobotPosture", constants.PEPPER_HOST, constants.PEPPER_PORT)
     posture.goToPosture("Stand", 0.5)
 
 def resetEyesAndTablet():
@@ -107,26 +130,26 @@ def showWhichPage(page):
 def show_on_tablet(path):
     # if path == 'loading_page':
     #     path = './pages/dashLoader.html'
-    sendToPepper(path, PEPPER_PAGE_LANDING)
+    ft.sendToPepper(path, constants.PEPPER_PAGE_LANDING)
     # receive_file(path, '/home/nao/.local/share/PackageManager/apps/robot-page/html/page.html')
-    tabletService = ALProxy("ALTabletService", ip, port)
+    tabletService = ALProxy("ALTabletService", constants.PEPPER_HOST, constants.PEPPER_PORT)
     tabletService.loadUrl('http://198.18.0.1/page.html')
     tabletService.showWebview()
 
 def stop_show_on_tablet():
     """hide the HTML viewer on Pepper"""
-    tabletService = ALProxy("ALTabletService", PEPPER_HOST, PEPPER_PORT)
+    tabletService = ALProxy("ALTabletService", constants.PEPPER_HOST, constants.PEPPER_PORT)
     tabletService.hideWebview()
 
 # Alt versions (can be removed if refactored)
 
 def showPage():
     """use ALTabletService to show html on Pepper"""
-    tabletService = ALProxy("ALTabletService", PEPPER_HOST, PEPPER_PORT)
+    tabletService = ALProxy("ALTabletService", constants.PEPPER_HOST, constants.PEPPER_PORT)
     tabletService.loadUrl('http://198.18.0.1/page.html')
     tabletService.showWebview()
     
 def hidePage():
     """use ALTabletService to hide html from Pepper"""
-    tabletService = ALProxy("ALTabletService", PEPPER_HOST, PEPPER_PORT)
+    tabletService = ALProxy("ALTabletService", constants.PEPPER_HOST, constants.PEPPER_PORT)
     tabletService.hideWebview()
