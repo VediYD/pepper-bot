@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=960px, height=600px, initial-scale=1, user-scalable=no">
+        <title>Site Display</title>
+        <!-- Max 54 char in heading-->
+        <script type="text/javascript">
+          function textLoad() {
+            var headText = "replaceHeadText";
+            var bodyText = "replaceBodyText";
+            document.getElementById("headTextId").innerHTML = headText;
+            document.getElementById("bodyTextId").innerHTML = bodyText;
+          }
+          
+        </script>
+        <style> 
+          .window {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 960px;
+            height: 600px;
+          }
+          .lower-banner {
+            width: 960px;
+            height: 200px;
+            background: #373636;
+            position: absolute;
+            font-family:Arial;
+            left:0px;
+            top:400px;
+          }
+          .background-image {
+            background-image: url("webfiles/img.png");
+            background-position: center;
+            background-size: cover;
+            position: absolute;
+            overflow: hidden;
+            top: 0px;
+            left: 0px;
+            width: 960px;
+            height: 400px;
+          }
+          .float-box  {
+            position: absolute;
+            max-width: 400;
+            max-height: 300px;
+            padding:32px;
+            top: 100px;
+            left: 100px;
+            color: white;
+            font-family:Arial;
+            font-size:46pt;
+          }
+          .both-text {
+            position: absolute;
+            width: 540px;
+            height: 180px;
+            top: 410px;
+            left: 410px;
+            color: white;
+            font-family:Arial;
+            overflow-y: hidden;
+          }
+          .qr-code-image {
+            position: absolute;
+            top: 240px;
+            left: 40px;
+            width: 320px;
+            height: 320px;            
+            border-radius:25px;
+          }
+          .find-out-text {
+            position: absolute;
+            top: 564px;
+            left: 24px;
+            color: white;
+            font-family:Arial;
+            font-size:20pt;
+          }
+          .arrow {
+            position: absolute;
+            top: 516px;
+            left: 330px;
+            color: #FF9300;
+            font-family:Arial;
+            font-size:46pt;
+            transform: rotate(90deg);
+          }
+
+        </style>
+    </head>
+    <body onload="textLoad()">
+      <div class="container">
+        <div class="window">
+          <div class="lower-banner"></div>
+          <div class="background-image"> </div>
+          <div class="float-box"></div>
+          <div class="both-text"><h1><span id="headTextId"></span></h1><h2><span id="bodyTextId"></span></h2></div>
+          <img class="qr-code-image" src="webfiles/qr.png" alt="qr-code"> </div>
+          <div class="find-out-text"> Scan here to find out more </div>
+          <div class="arrow"> &#8630; </div> <!-- &#10149; -->
+          <div class="under-text"><span id="locationTextId"></span></div>
+        </div>
+      </div>
+    </body>
+</html>
