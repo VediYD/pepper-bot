@@ -1,25 +1,14 @@
-### Custom File Handing Imports ###
-from fileTransfer import *
-
-### Custom Idle Behaviour Imports ###
-from idle import *
-
-### Custom Page Display Imports ###
-from displayGeneration import *
-
-### Custom Interaction, Behaviour and Display Imports ###
-from interactiveControls import *
-
-### Custom Hard-Coded Prompt Imports ###
-from prompts import *
-
-### Main Interaction Imports ###
-from humanInteraction import *
+from naoqi import ALProxy
 
 import fileTransfer as ft
+from fileTransfer import sendToPepper
 
-import constants
+import displayGeneration as dg
+# from displayGeneration import generateDefaultPage, generateDashLoader, generateWelcomePage, generateStudyPage, generateUpperCoursePage, generateAccomodationPage, generateClubPage, generateCampusPage
+from displayGeneration import *
 
+import constants, threading, time 
+from constants import PEPPER_HOST, PEPPER_PORT, PEPPER_PAGE_LANDING
 
 ################################################################################
 ##### Head Tracking Functions
@@ -109,23 +98,24 @@ def showWhichPage(page):
     """Show specific special case pages"""
     hidePage()
     if page == "prompt":
-        generateDefaultPage()
+        dg.generateDefaultPage()
     elif page == "loading":
-        generateDashLoader()
+        dg.generateDashLoader()
     elif page == "Cwel":
-        generateWelcomePage()
+        dg.generateWelcomePage()
     elif page == "Cstu":
-        generateStudyPage()
+        dg.generateStudyPage()
     elif page == "Cour":
-        generateUpperCoursePage()
+        dg.generateUpperCoursePage()
     elif page == "Cacc":
-        generateAccomodationPage()
+        dg.generateAccomodationPage()
     elif page == "Club":
-        generateClubPage()
+        dg.generateClubPage()
     elif page == "Camp":
-        generateCampusPage()
+        dg.generateCampusPage()
     else:
-        generateWelcomePage()
+        dg.generateWelcomePage()
+    showPage()
 
 def show_on_tablet(path):
     # if path == 'loading_page':

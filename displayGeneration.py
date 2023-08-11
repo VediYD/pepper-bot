@@ -1,22 +1,29 @@
-### Custom File Handing Imports ###
-from fileTransfer import *
+# ### Custom File Handing Imports ###
+# from fileTransfer import *
 
-### Custom Idle Behaviour Imports ###
-from idle import *
+# ### Custom Idle Behaviour Imports ###
+# from idle import *
 
-### Custom Page Display Imports ###
-from displayGeneration import *
+# ### Custom Page Display Imports ###
+# from displayGeneration import *
 
-### Custom Interaction, Behaviour and Display Imports ###
-from interactiveControls import *
+# ### Custom Interaction, Behaviour and Display Imports ###
+# from interactiveControls import *
 
-### Custom Hard-Coded Prompt Imports ###
-from prompts import *
+# ### Custom Hard-Coded Prompt Imports ###
+# from prompts import *
 
-### Main Interaction Imports ###
-from humanInteraction import *
+# ### Main Interaction Imports ###
+# from humanInteraction import *
 
-import constants
+import constants, shutil, fileinput
+import pandas as pd
+from constants import FILE_NAME_TEMP, TEXT_BY_ID_PATH, PEPPER_QR_LANDING, PEPPER_IMG_LANDING, PEPPER_PAGE_LANDING, PEPPER_HTML_PATH
+from interactiveControls import showPage
+from fileTransfer import sendFileToPepper
+from bs4 import BeautifulSoup
+import fileTransfer as ft
+import re
 
 ################################################################################
 ##### File Setup
@@ -132,19 +139,39 @@ def seekCourseAndLocationText(ID):
 ##########
 
 
-def textSub(tempText, subText):
-    """find text in file and replace with other text"""
-    textToCut = tempText  # "replaceCourseText"
-    textToPaste = subText  # "the replacement text"
-    # fileName = "display.html"
+# def textSub(tempText, subText):
+#     """find text in file and replace with other text"""
+#     textToCut = tempText  # "replaceCourseText"
+#     textToPaste = subText  # "the replacement text"
+#     # fileName = "display.html"
 
-    tempFile = open(constants.FILE_NAME_TEMP, "r+")
+#     tempFile = open(constants.FILE_NAME_TEMP, "r")
+#     tempWrite = open(constants.FILE_NAME_TEMP, "w")
+#     matchSuccess = False
+#     for line in fileinput.input(constants.FILE_NAME_TEMP):
+#         if textToCut in line:
+#             matchSuccess = True
+#             tempWrite.write(line.replace(textToCut, textToPaste))
+#     tempFile.close()
+
+#     if matchSuccess:
+#         pepperLog("text match found")
+#     else:
+#         pepperLog("text match exception occurred")
+
+def textSub(tempText, subText):
+    soup = BeautifulSoup(open(constants.FILE_NAME_TEMP), "html.parser")
+    target = soup.find(text=re.compile(tempText))
+
     matchSuccess = False
-    for line in fileinput.input(constants.FILE_NAME_TEMP):
-        if textToCut in line:
-            matchSuccess = True
-            tempFile.write(line.replace(textToCut, textToPaste))
-    tempFile.close()
+    if target:
+        matchSuccess = True
+        target.replace_with(target.replace(tempText, subText))
+
+        # Write the changes back to the HTML file
+        with open(constants.FILE_NAME_TEMP, "w") as file:
+            file.write(str(soup))
+
 
     if matchSuccess:
         pepperLog("text match found")
@@ -239,8 +266,8 @@ def seekImg(ID):
 def sendPage():
     """take display.html and push to live"""
     # to send a file to Pepper, call receive_file(local_path="recordings/recording.wav", remote_path="/home/nao/microphones/recording.wav")
-    sendFileToPepper(constants.FILE_NAME_TEMP, constants.PEPPER_PAGE_LANDING)
-    showPage()
+    ft.sendFileToPepper(constants.FILE_NAME_TEMP, constants.PEPPER_PAGE_LANDING)
+    # showPage()
 
 #def showPage():
 #    """use ALTabletService to show html on Pepper"""

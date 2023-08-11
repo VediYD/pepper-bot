@@ -1,25 +1,33 @@
-### Custom File Handing Imports ###
-from fileTransfer import *
+from naoqi import ALProxy
 
-### Custom Idle Behaviour Imports ###
-from idle import *
+# ### Custom File Handing Imports ###
+# from fileTransfer import *
 
-### Custom Page Display Imports ###
-from displayGeneration import *
+# ### Custom Idle Behaviour Imports ###
+# from idle import *
 
-### Custom Interaction, Behaviour and Display Imports ###
-from interactiveControls import *
+# ### Custom Page Display Imports ###
+# from displayGeneration import *
 
-### Custom Hard-Coded Prompt Imports ###
-from prompts import *
+# ### Custom Interaction, Behaviour and Display Imports ###
+# from interactiveControls import *
 
-### Main Interaction Imports ###
-from humanInteraction import *
+# ### Custom Hard-Coded Prompt Imports ###
+# from prompts import *
+
+# ### Main Interaction Imports ###
+# from humanInteraction import *
 
 import prompts
-import constants
-import interactiveControls as ic
+import constants, requests, time, random, threading, os
 
+import fileTransfer as ft
+from fileTransfer import sendFromPepper
+
+import interactiveControls as ic
+from interactiveControls import showWhichPage, resetEyesAndTablet, set_leds
+
+import speech_recognition as sr
 ################################################################################
 ##### Function Handles
 ##########

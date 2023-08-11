@@ -1,9 +1,20 @@
 <!DOCTYPE html>
+
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=960px, height=600px, initial-scale=1, user-scalable=no">
-        <style> 
+<head>
+<meta charset="utf-8"/>
+<meta content="width=960px, height=600px, initial-scale=1, user-scalable=no" name="viewport"/>
+<title>Site Display</title>
+<script type="text/javascript">
+          function textLoad() {
+            var courseName = "Diploma of Arabic";
+            var locationText = "This course is offered  in Trimester one, at Melbourne Burwood Campus and Online";
+            document.getElementById("courseTextId").innerHTML = courseName;
+            document.getElementById("locationTextId").innerHTML = locationText;
+          }
+          
+        </script>
+<style> 
           .window {
             position: absolute;
             top: 0px;
@@ -12,115 +23,89 @@
             height: 600px;
             background-color: rgba(225,225,225,1);
           }
-          .prompt {
-            width: 460px;
-            height: 80px;
-            padding:18px;
-            text-align: center;
-            margin: auto;
+          .parallelogram {
+            width: 550px;
+            height: 600px;
+            transform: skew(-16deg);
+            background: #373636;
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #007d98;
+            left:-89px;
+            top:0px;
+          }
+          .background-image {
+            position: absolute;
+            top: 0px;
+            left: 360px;
+            width: 600px;
+            height: 400px;
+          }
+          .course-name-text {
+            position: absolute;
+            max-width: 480px;
+            max-height: 150px;
+            top: 18px;
+            left: 26px;
             color: white;
             font-family:Arial;
             font-size:46pt;
             overflow-y: hidden;
-            border-radius:60px;
           }
-          .text-bubble-01 {
-            padding:12px;
-            text-align: center;
-            margin: auto;
+          .qr-code-image {
             position: absolute;
-            top: 78%;
-            left: 68%;
-            transform: translate(-18%, -78%);
-            background-color: #c74298;
-            opacity: 0.9;
+            top: 240px;
+            left: 40px;
+            width: 320px;
+            height: 320px;            
+            border-radius:25px;
+          }
+          .find-out-text {
+            position: absolute;
+            top: 564px;
+            left: 24px;
             color: white;
+            font-family:Arial;
+            font-size:20pt;
+          }
+          .arrow {
+            position: absolute;
+            top: 516px;
+            left: 330px;
+            color: #FF9300;
+            font-family:Arial;
+            font-size:46pt;
+            transform: rotate(90deg);
+          }
+           .map {
+            position: absolute;
+            top: 516px;
+            left: 430px;
+            color: #ffd923;
+            font-family:Arial;
+            font-size:46pt;
+          }
+            .under-text {
+            position: absolute;
+            top: 418px;
+            left: 442px;
+            width: 500px;
+            height: 160px;
+            color: black;
             font-family:Arial;
             font-size:24pt;
             overflow-y: hidden;
-            border-radius:36px;
           }
-          .text-bubble-02 {
-            padding:12px;
-            text-align: center;
-            margin: auto;
-            position: absolute;
-            top: 28%;
-            left: 24%;
-            transform: translate(-24%, -28%);
-            background-color: #cc4e07;
-            opacity: 0.9;
-            color: white;
-            font-family:Arial;
-            font-size:24pt;
-            overflow-y: hidden;
-            border-radius:36px;
-          }
-          .text-bubble-03 {
-            padding:12px;
-            text-align: center;
-            margin: auto;
-            position: absolute;
-            top: 90%;
-            left: 45%;
-            transform: translate(-45%, -90%);
-            background-color: #ffd923;
-            opacity: 0.9;
-            color: white;
-            font-family:Arial;
-            font-size:24pt;
-            overflow-y: hidden;
-            border-radius:36px;
-          }
-          .text-bubble-04 {
-            padding:12px;
-            text-align: center;
-            margin: auto;
-            position: absolute;
-            top: 14%;
-            left: 67%;
-            transform: translate(-40%, -14%);
-            background-color: #0b7161;
-            opacity: 0.9;
-            color: white;
-            font-family:Arial;
-            font-size:24pt;
-            overflow-y: hidden;
-            border-radius:36px;
-          }
-          .text-bubble-05 {
-            padding:12px;
-            text-align: center;
-            margin: auto;
-            position: absolute;
-            top: 72%;
-            left: 11%;
-            transform: translate(-11%, -72%);
-            background-color: #58bcaf;
-            opacity: 0.9;
-            color: white;
-            font-family:Arial;
-            font-size:24pt;
-            overflow-y: hidden;
-            border-radius:36px;
-          }
+
         </style>
-    </head>
-    <body onload="textLoad()">
-      <div class="container">
-        <div class="window">
-          <div class="prompt"><span> Ask me about... </span></div>
-          <div class="text-bubble-01"> course information </div>
-          <div class="text-bubble-02"> accommodation </div>
-          <div class="text-bubble-03"> studying at Deakin </div>
-          <div class="text-bubble-04"> Deakin campuses </div>
-          <div class="text-bubble-05"> student clubs </div>
-        </div>
-      </div>
-    </body>
+</head>
+<body onload="textLoad()">
+<div class="container">
+<div class="window">
+<img alt="background" class="background-image" src="webfiles/img.png"/> </div>
+<div class="parallelogram"></div>
+<div class="course-name-text"><span id="courseTextId"></span></div>
+<img alt="qr-code" class="qr-code-image" src="webfiles/qr.png"/> </div>
+<div class="find-out-text"> Scan here to find out more </div>
+<div class="arrow"> ↶ </div> <!-- &#10149; -->
+<div class="under-text"><span id="locationTextId"></span></div>
+</body>
 </html>

@@ -1,3 +1,37 @@
+"""
+#1: prompts
+
+#2: fileTransfer
+### otherPackages: paramiko, 
+### constants: PEPPER_RECORDINGS_PATH, SERVER_RECORDINGS_PATH, PEPPER_HOST
+
+#3: displayGeneration
+### otherPackages: shutil, pd, fileinput
+### constants: FILE_NAME_TEMP, TEXT_BY_ID_PATH, PEPPER_QR_LANDING, PEPPER_IMG_LANDING, PEPPER_PAGE_LANDING
+### dependencies: fileTransfer
+from fileTransfer import sendFileToPepper, showPage
+
+#4: interactiveControls
+### otherPackages: ALProxy, time, threading
+### constants: PEPPER_HOST, PEPPER_PORT, PEPPER_PAGE_LANDING
+### dependencies: displayGeneration
+from displayGeneration import generateDefaultPage, generateDashLoader, generateWelcomePage, generateStudyPage, generateUpperCoursePage, generateAccomodationPage, generateClubPage, generateCampusPage
+from fileTransfer import sendToPepper,
+
+#5: idle
+### otherPackages: ALProxy, time, threading
+### constants: PEPPER_HOST, PEPPER_PORT
+### dependencies:
+
+#6: humanInteraction
+### otherPackages: ALProxy, requests, time, sr, threading, os, random
+### constants: PEPPER_HOST, PEPPER_PORT
+### dependencies: fileTransfer, interactiveControls, prompts
+from fileTransfer import sendFromPepper, 
+from interactiveControls import showWhichPage, resetEyesAndTablet, set_leds
+import prompts
+"""
+
 global GPT_HOST, GPT_PORT, PEPPER_HOST, PEPPER_PORT, PEPPER_RECORDINGS_PATH, SERVER_RECORDINGS_PATH, PEPPER_HTML_PATH, PEPPER_PAGE_LANDING, PEPPER_QR_LANDING, PEPPER_IMG_LANDING, TEXT_BY_ID_PATH
 
 ### Naoqi Related Imports ###

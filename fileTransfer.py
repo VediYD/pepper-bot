@@ -1,22 +1,24 @@
-### Custom File Handing Imports ###
-from fileTransfer import *
+# ### Custom File Handing Imports ###
+# from fileTransfer import *
 
-### Custom Idle Behaviour Imports ###
-from idle import *
+# ### Custom Idle Behaviour Imports ###
+# from idle import *
 
-### Custom Page Display Imports ###
-from displayGeneration import *
+# ### Custom Page Display Imports ###
+# from displayGeneration import *
 
-### Custom Interaction, Behaviour and Display Imports ###
-from interactiveControls import *
+# ### Custom Interaction, Behaviour and Display Imports ###
+# from interactiveControls import *
 
-### Custom Hard-Coded Prompt Imports ###
-from prompts import *
+# ### Custom Hard-Coded Prompt Imports ###
+# from prompts import *
 
-### Main Interaction Imports ###
-from humanInteraction import *
+# ### Main Interaction Imports ###
+# from humanInteraction import *
 
-import constants
+
+import constants, paramiko
+from constants import PEPPER_HOST, PEPPER_PORT, PEPPER_RECORDINGS_PATH, SERVER_RECORDINGS_PATH
 
 ################################################################################
 ##### SFTP File Transfer Functions
@@ -65,7 +67,7 @@ def setupSFTP():
     """open SFTP connection"""
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(PEPPER_HOST, username='nao', password='nao')
+    ssh.connect(constants.PEPPER_HOST, username='nao', password='nao')
     sftp = ssh.open_sftp()
     return ssh, sftp
 
