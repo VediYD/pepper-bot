@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 
+from scipy.io import wavfile
 import noisereduce as nr
-import speech_recognition as sr
 import numpy as np
 import soundfile as sf
 
@@ -9,45 +9,40 @@ app = Flask(__name__)
 
 @app.route('/noise', methods=['POST'])
 def noise_reducer():
-    try:
-        data = request.json
-        print(data)
-        # Load data
-        prop_decrease = float(data['prop_decrease'])
-        path = str(data['path'])
-
-        if path != '':
-            audio_data, sample_rate = sf.read(path)
-        else:
-            audio_data, sample_rate = sf.read("recordings/recording.wav")
-
-        # Assuming audio_file contains the path to the WAV file
-        # Read the WAV file and get audio data and sample rate
-
-        # Apply noise reduction
-        reduced_noise = nr.reduce_noise(y=audio_data, sr=sample_rate, prop_decrease=prop_decrease)
-
-        # Now you can pass the 'reduced_noise' to your speech-to-text module
-        sf.write("recordings/rn_recording.wav", reduced_noise, sample_rate)
-
-        return 'Reduced'
-    except:
-        return 'Error'
-
-@app.route('/stt', methods=['POST'])
-def speech_to_text():
+    # Get the audio file path
     data = request.json
-    audio_path = str(data['path'])
+    path = str(data['audio_loc'])
+    sav_loc = str(data['save_loc'])
+    prop_decrease = float(data['prop_decrease'])
+    vol_increase = float(data['vol_increase'])
 
-    r = sr.Recognizer()
-    audio = sr.AudioFile(audio_path)
+    # Load Data
+    rate, data = wavfile.read(path)
     
-    with audio as source:
-        audio_file = r.record(source)
-        result = r.recognize_sphinx(audio_file)
+    # Noise Data
+    n_rate, n_data = wavfile.read("recordings/noise.wav")
 
-    print(result)
-    return result
+    # Reduce noise
+    reduced_noise = nr.reduce_noise(y=data, 
+                                    sr=rate, 
+                                    y_noise=n_data,
+                                    prop_decrease=prop_decrease, 
+                                    n_jobs=-1)
+
+    # Increase volume (make up for the volume reduction)
+    reduced_noise = reduced_noise * vol_increase
+
+    # Convert to 16-bit data
+    reduced_noise = reduced_noise.astype(np.int16)
+
+    # Save the output
+    if sav_loc != '':
+        wavfile.write(sav_loc, rate, reduced_noise)
+    else:
+        sav_loc = "recordings/rn_recording.wav"
+        wavfile.write(sav_loc, rate, reduced_noise)
+
+    return 'Saved noise reduced audio file to ' + sav_loc
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8891, debug=True)
+    app.run(host='0.0.0.0', port=8891)
