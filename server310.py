@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from scipy.io import wavfile
 import noisereduce as nr
 import numpy as np
+import speech_recognition as sr
 import soundfile as sf
 
 app = Flask(__name__)
@@ -43,6 +44,32 @@ def noise_reducer():
         wavfile.write(sav_loc, rate, reduced_noise)
 
     return 'Saved noise reduced audio file to ' + sav_loc
+
+@app.route('/speechtotext', methods=['POST'])
+def speech_to_text():
+    # Get the audio file path
+    data = request.json
+    path = str(data['audio_loc'])
+    engine = str(data['engine'])
+
+    # Initialize recognizer class (for recognizing the speech)
+    r = sr.Recognizer()
+
+    # Convert the audio to speech
+    with sr.AudioFile(path) as source:
+        # Listen for the data (load audio to memory)
+        audio_data = r.record(source)
+        # Recognize the text
+        text = None
+        if engine == 'google':
+            text = r.recognize_google(audio_data)
+        elif engine == 'sphinx':
+            text = r.recognize_sphinx(audio_data)
+        elif engine == 'ibm':
+            text = r.recognize_ibm(audio_data)
+
+    return text
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8891)
