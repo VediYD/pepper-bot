@@ -14,7 +14,7 @@ import threading
 print('imports complete')
 
 # load course data
-data = read_csv('gpt-summarized-info.csv')
+data = read_csv('document.csv')
 data['content'] = data['course_name'] + ' ' + data.o_summarized
 loader = DataFrameLoader(data[['content']], page_content_column='content') 
 document = loader.load_and_split()
@@ -104,16 +104,15 @@ def handle_question():
         global db
         _te = []
         for i in db.similarity_search(question):
-            print(i)
             _te.append(i.metadata['course_code'])
             
         yield ','.join(_te)
         
         index = 0 
         while True:
-            lres = len(responses)
+            lres = len(to_send)
             if (index+1) <= lres:
-                yield responses[index]
+                yield to_send[index]
                 index += 1
             if _nsent:
                 yield "quit"
