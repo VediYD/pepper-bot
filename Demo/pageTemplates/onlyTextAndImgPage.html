@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=960px, height=600px, initial-scale=1, user-scalable=no">
+        <title>Site Display</title>
+        <!-- Max 54 char in heading-->
+        <script type="text/javascript">
+          function textLoad() {
+            var headText = "replaceHeadText";
+            var bodyText = "replaceBodyText";
+            document.getElementById("headTextId").innerHTML = headText;
+            document.getElementById("bodyTextId").innerHTML = bodyText;
+          }
+          
+        </script>
+        <style> 
+          .window {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 960px;
+            height: 600px;
+          }
+          .background-image {
+            background-image: url("webfiles/img.png");
+            background-position: center;
+            background-size: cover;
+            position: absolute;
+            overflow: hidden;
+            top: 0px;
+            left: 0px;
+            width: 960px;
+            height: 600px;
+          }
+          .float-box  {
+            position: absolute;
+            width: 240px;
+            height: 456px;
+            padding: 12px;
+            top: 60px;
+            left: 60px;
+            background-color: rgba(225,225,225,0.92);
+            border-radius:15px;
+            overflow-y: hidden;
+          }
+          .text-fill  {
+            color: black;
+            font-family: Arial;
+          }
+
+        </style>
+    </head>
+    <body onload="textLoad()">
+      <div class="container">
+        <div class="window">
+          <div class="background-image"> </div>
+          <div class="float-box">
+            <div class="text-fill">
+              <h1><span id="headTextId"></span></h1>
+              <h2><span id="bodyTextId"></span></h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+</html>

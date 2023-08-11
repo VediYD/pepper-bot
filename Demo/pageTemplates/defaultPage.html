@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=960px, height=600px, initial-scale=1, user-scalable=no">
+        <style> 
+          .window {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 960px;
+            height: 600px;
+            background-color: rgba(225,225,225,1);
+          }
+          .prompt {
+            width: 460px;
+            height: 80px;
+            padding:18px;
+            text-align: center;
+            margin: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #007d98;
+            color: white;
+            font-family:Arial;
+            font-size:46pt;
+            overflow-y: hidden;
+            border-radius:60px;
+          }
+          .text-bubble-01 {
+            padding:12px;
+            text-align: center;
+            margin: auto;
+            position: absolute;
+            top: 78%;
+            left: 68%;
+            transform: translate(-18%, -78%);
+            background-color: #c74298;
+            opacity: 0.9;
+            color: white;
+            font-family:Arial;
+            font-size:24pt;
+            overflow-y: hidden;
+            border-radius:36px;
+          }
+          .text-bubble-02 {
+            padding:12px;
+            text-align: center;
+            margin: auto;
+            position: absolute;
+            top: 28%;
+            left: 24%;
+            transform: translate(-24%, -28%);
+            background-color: #cc4e07;
+            opacity: 0.9;
+            color: white;
+            font-family:Arial;
+            font-size:24pt;
+            overflow-y: hidden;
+            border-radius:36px;
+          }
+          .text-bubble-03 {
+            padding:12px;
+            text-align: center;
+            margin: auto;
+            position: absolute;
+            top: 90%;
+            left: 45%;
+            transform: translate(-45%, -90%);
+            background-color: #ffd923;
+            opacity: 0.9;
+            color: white;
+            font-family:Arial;
+            font-size:24pt;
+            overflow-y: hidden;
+            border-radius:36px;
+          }
+          .text-bubble-04 {
+            padding:12px;
+            text-align: center;
+            margin: auto;
+            position: absolute;
+            top: 14%;
+            left: 67%;
+            transform: translate(-40%, -14%);
+            background-color: #0b7161;
+            opacity: 0.9;
+            color: white;
+            font-family:Arial;
+            font-size:24pt;
+            overflow-y: hidden;
+            border-radius:36px;
+          }
+          .text-bubble-05 {
+            padding:12px;
+            text-align: center;
+            margin: auto;
+            position: absolute;
+            top: 72%;
+            left: 11%;
+            transform: translate(-11%, -72%);
+            background-color: #58bcaf;
+            opacity: 0.9;
+            color: white;
+            font-family:Arial;
+            font-size:24pt;
+            overflow-y: hidden;
+            border-radius:36px;
+          }
+        </style>
+    </head>
+    <body onload="textLoad()">
+      <div class="container">
+        <div class="window">
+          <div class="prompt"><span> Ask me about... </span></div>
+          <div class="text-bubble-01"> course information </div>
+          <div class="text-bubble-02"> accommodation </div>
+          <div class="text-bubble-03"> studying at Deakin </div>
+          <div class="text-bubble-04"> Deakin campuses </div>
+          <div class="text-bubble-05"> student clubs </div>
+        </div>
+      </div>
+    </body>
+</html>

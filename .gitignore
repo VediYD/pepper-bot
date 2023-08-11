@@ -26,9 +26,6 @@ share/python-wheels/
 *.egg
 MANIFEST
 recordings/Data Collection
-pageTemplates
-QRCodes
-imgFiles
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
