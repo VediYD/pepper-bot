@@ -1,3 +1,4 @@
+from urllib import response
 from naoqi import ALProxy
 
 # ### Custom File Handing Imports ###
@@ -56,7 +57,7 @@ def think(query, responsesPipeline, eyes):
     eyes.start_thinking()
     # show_on_tablet('Demo/pageTemplates/dashLoader.html')
     ic.showWhichPage("loading")
-    postQuery(query, responsesPipeline) #postQuery(_question, sentences):
+    postQueryToGPTStreamer(query, responsesPipeline) #postQuery(_question, sentences):
     eyes.stop_thinking()
     ic.resetEyesAndTablet()
 
@@ -188,6 +189,10 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
             sound_detector.unsubscribe("sound_detector")
             break
 
+def stopListening():
+    recorder = ALProxy("ALAudioRecorder", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    recorder.stopMicrophonesRecording()
+
 
 
 ################################################################################
@@ -226,32 +231,47 @@ def convert_wav_to_text(audio_path):
 
 # global c_code
 
-def say_sentences_thread(sentences):
-    # df = pd.read_csv('pages/textbyID.csv')
-    # courseID = df['ID'].tolist()
-    # check_ID = True
-    while True:
-        if len(sentences) != 0:
+# def say_sentences_thread(sentences):
+#     # df = pd.read_csv('pages/textbyID.csv')
+#     # courseID = df['ID'].tolist()
+#     # check_ID = True
+#     while True:
+#         if len(sentences) != 0:
 
-            # if check_ID:
-            #     check_ID = False
-            #     for word in courseID:
-            #         if word in sentences[0]:
-            #             c_code = str(sentences[0].split(',')[0])
-            #             print('Course Code: ' + c_code)
+#             # if check_ID:
+#             #     check_ID = False
+#             #     for word in courseID:
+#             #         if word in sentences[0]:
+#             #             c_code = str(sentences[0].split(',')[0])
+#             #             print('Course Code: ' + c_code)
 
-            if sentences[0] == "quit":
-                break  
+#             if sentences[0] == "quit":
+#                 break  
              
-            speak(sentences[0])
-            sentences.pop(0)
+#             speak(sentences[0])
+#             sentences.pop(0)
 
-        else:
-            time.sleep(1)
-            continue
-    print('Stopped')
+#         else:
+#             time.sleep(1)
+#             continue
+#     print('Stopped')
 
-def receive_responses(response, sentences):
+# # def receive_responses(response, sentences):
+#     say_thread = threading.Thread(target=say_sentences_thread, args=(sentences,))
+#     say_thread.start()
+#     for line in response.iter_content(chunk_size=None):
+#         x = str(line.decode('utf-8'))
+#         print(x)
+#         sentences.append(x)
+#     say_thread.join()
+
+def postQueryToGPTStreamer(_question, sentences):
+    url = 'http://10.104.22.24:8891/courseInfo' # url = "http://{}:{}/courseInfo".format(GPT_HOST, GPT_PORT)
+    data = {"question": _question}
+    response = requests.post(url, json=data, stream=True) #r
+    # receive_responses(r, sentences) # def receive_responses(response, sentences):
+
+    # Sentences Thread
     say_thread = threading.Thread(target=say_sentences_thread, args=(sentences,))
     say_thread.start()
     for line in response.iter_content(chunk_size=None):
@@ -260,13 +280,14 @@ def receive_responses(response, sentences):
         sentences.append(x)
     say_thread.join()
 
-def postQuery(_question, sentences):
-    url = 'http://10.104.22.24:8891/courseInfo'
-    # url = "http://{}:{}/courseInfo".format(GPT_HOST, GPT_PORT)
-    data = {"question": _question}
-    r = requests.post(url, json=data, stream=True)
-    receive_responses(r, sentences)
-
-def stopListening():
-    recorder = ALProxy("ALAudioRecorder", constants.PEPPER_HOST, constants.PEPPER_PORT)
-    recorder.stopMicrophonesRecording()
+def say_sentences_thread(sentences):
+    while True:
+        if len(sentences) != 0:
+            if sentences[0] == "quit":
+                break  
+            speak(sentences[0])
+            sentences.pop(0)
+        else:
+            time.sleep(1)
+            continue
+    print('Stopped')
