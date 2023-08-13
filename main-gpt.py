@@ -61,8 +61,8 @@ counter = 0
 responses = []
 to_send = []
 _nsent = False
-model_path = '/app/temp/pepper-bot/ggml-gpt4all-j-v1.3-groovy.bin'
-llm = GPT4All(model=model_path, verbose=False, n_threads=4, seed=42, temp=0.3, streaming=False, use_mlock=True)
+model_path = '/app/ggml-gpt4all-j-v1.3-groovy.bin'
+llm = GPT4All(model=model_path, verbose=False, n_threads=8, seed=42, temp=0.3, streaming=False, use_mlock=True)
 llm.client.model._response_callback = _callback
 print('GPT4ALL model loaded - 1.3 groovy')
 
@@ -102,11 +102,11 @@ def handle_question():
     
     def yield_generation():
         global db
-        _te = []
-        for i in db.similarity_search(question):
-            _te.append(i.metadata['course_code'])
+#         _te = []
+#         for i in db.similarity_search(question):
+#             _te.append(i.metadata['course_code'])
             
-        yield ','.join(_te)
+#         yield ','.join(_te)
         
         index = 0 
         while True:
