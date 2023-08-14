@@ -87,6 +87,14 @@ def querySpecificCourse(query, responsesPipeline, eyes, rcnt):
 ##### Detect Person
 ##########
 
+def faceTracker():
+    tracker = ALProxy("ALTracker", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    tracker.registerTarget("Face", 0.1)
+    tracker.setMode("Head")
+    tracker.track("Face")
+    tracker.setMaximumDistanceDetection(0.1)
+
+
 def seePersonAndGreet():
     # Imports
     memory = ALProxy("ALMemory", constants.PEPPER_HOST, constants.PEPPER_PORT)
