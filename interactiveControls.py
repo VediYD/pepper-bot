@@ -1,3 +1,4 @@
+from inspect import _Object
 from naoqi import ALProxy
 
 import fileTransfer as ft
@@ -47,26 +48,105 @@ def set_leds(color = 'white', ledSet = 'Face'):
         leds.fadeRGB(ledSet + "Leds", color, 1)
 
 # class think_eyes:
-class eyesController():
+class EyesController(_Object):
     def __init__(self):
         # self.thinking = True
         self.leds = ALProxy("ALLeds", constants.PEPPER_HOST, constants.PEPPER_PORT)
+        self.colourList = {
+            "thinking":[0.04, 0.44, 0.38],  # green
+            "listening":[0, 0.49, 0.60],  # teal
+            "confused":[0.78, 0.26, 0.60],  # magenta
+            "neutral":[1, 1, 1]  # white
+        }
+        self.eyeFade = True
+        self.mode = "neutral"
+        self.eyeColourThread = None 
 
-    def thinking_eyes(self):
-        while self.thinking:
+    def colourEyes(self):
+        while self.eyeFade:
             self.leds.fadeRGB("FaceLeds", 'white', 1)
             time.sleep(1)
-            self.leds.fadeRGB("FaceLeds", 0.6, 1, 0.79, 1)
+            # self.leds.fadeRGB("FaceLeds", 0.6, 1, 0.79, 1)
+            self.leds.fadeRGB(
+                "FaceLeds", 
+                self.colourList[self.mode][0], 
+                self.colourList[self.mode][1], 
+                self.colourList[self.mode][2], 
+                1
+            ) 
+ 
+    def startEyes(self, mode):
+        """start eye colour thread: one of thinking, listening, confused, neutral"""
+        self.mode = mode
+        self.eyeColourThread = threading.Thread(target=self.colourEyes)
+        self.eyeColourThread.start()
 
-    def start_thinking(self):
-        self.thinking = True
-        self.eye_thinking_thread = threading.Thread(target=self.thinking_eyes)
-        self.eye_thinking_thread.start()
-
-    def stop_thinking(self):
-        self.thinking = False
+    def setEyes(self, mode):
+        """update the eye fade colour: one of thinking, listening, confused, neutral"""
+        self.mode=mode
+        self.eyeFade = True
+        
+    def stopEyes(self):
+        """hard stop, requires totally new thread to restart"""
+        self.eyeFade = False
+        self.eyeColourThread.join(0)
         self.leds.fadeRGB("FaceLeds", "white", 1)
-        self.eye_thinking_thread.join(0)
+
+
+    # ### Thinking ###
+    # def thinking_eyes(self):
+    #     while self.thinking:
+    #         self.leds.fadeRGB("FaceLeds", 'white', 1)
+    #         time.sleep(1)
+    #         # self.leds.fadeRGB("FaceLeds", 0.6, 1, 0.79, 1)
+    #         self.leds.fadeRGB("FaceLeds", 0.04, 0.44, 0.38, 1) # Green Fade
+
+    # def start_thinking(self):
+    #     self.thinking = True
+    #     self.eye_thinking_thread = threading.Thread(target=self.thinking_eyes)
+    #     self.eye_thinking_thread.start()
+
+    # def stop_thinking(self):
+    #     self.thinking = False
+    #     self.leds.fadeRGB("FaceLeds", "white", 1)
+    #     self.eye_thinking_thread.join(0)
+
+
+    # ### Listening ###
+    # def listening_eyes(self):
+    #     while self.listening:
+    #         self.leds.fadeRGB("FaceLeds", 'white', 1)
+    #         time.sleep(1)
+    #         self.leds.fadeRGB("FaceLeds", 0, 0.49, 0.60, 1) # Teal fade
+
+    # def start_listening(self):
+    #     self.listening = True
+    #     self.eye_listening_thread = threading.Thread(target=self.listening_eyes)
+    #     self.eye_listening_thread.start()
+
+    # def stop_listening(self):
+    #     self.listening = False
+    #     self.leds.fadeRGB("FaceLeds", "white", 1)
+    #     self.eye_listening_thread.join(0)
+
+
+    # ## Confused ###
+    # def confused_eyes(self):
+    #     while self.confused:
+    #         self.leds.fadeRGB("FaceLeds", 'white', 1)
+    #         time.sleep(1)
+    #         self.leds.fadeRGB("FaceLeds", 0.78, 0.26, 0.60, 1) # magenta
+
+    # def start_confused(self):
+    #     self.confused = True
+    #     self.eye_confused_thread = threading.Thread(target=self.confused_eyes)
+    #     self.eye_confused_thread.start()
+
+    # def stop_confused(self):
+    #     self.confused = False
+    #     self.leds.fadeRGB("FaceLeds", "white", 1)
+    #     self.eye_confused_thread.join(0)
+
 
 
 ################################################################################
@@ -89,6 +169,8 @@ def defaultPosture():
 def resetEyesAndTablet():
     hidePage()
     set_leds()
+
+
 
 ################################################################################
 ##### Tablet Page
@@ -145,3 +227,16 @@ def hidePage():
     """use ALTabletService to hide html from Pepper"""
     tabletService = ALProxy("ALTabletService", constants.PEPPER_HOST, constants.PEPPER_PORT)
     tabletService.hideWebview()
+
+
+
+
+################################################################################
+##### Whole Body Language
+##########
+
+def startListeningBL():
+    dg.generateDashLoader()
+    showPage()
+
+
