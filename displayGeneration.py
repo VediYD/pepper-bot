@@ -49,6 +49,10 @@ import re
 #constants.PEPPER_IMG_LANDING = PEPPER_HTML_PATH + "webfiles/img.png"  # switched slash direction
 #constants.TEXT_BY_ID_PATH = "pages/textbyID.csv"
 
+PATH_PREFIX = ""
+IMG_FILES_FOLDER = "ImgFiles/"
+QR_CODES_FOLDER = "QRCodes/"
+
 
 ###
 def pepperLog(log):
@@ -250,7 +254,7 @@ def subListText(subText):
 def seekQR(ID):
     """find QR code in library and move to location"""
     ### find QR code in library
-    pathToQR = "QRCodes/" + ID + ".png"
+    pathToQR = PATH_PREFIX + QR_CODES_FOLDER + ID + ".png" #"QRCodes/"
     ### move QR code to file location as "webfiles\qr.png"
     sendFileToPepper(pathToQR, constants.PEPPER_QR_LANDING)
 
@@ -258,7 +262,7 @@ def seekQR(ID):
 def seekImg(ID):
     """find QR code in library and move to location"""
     ### find img in library
-    pathToImg = "imgFiles/" + ID + ".png"
+    pathToImg = PATH_PREFIX + IMG_FILES_FOLDER + ID + ".png" #"imgFiles/"
     ### move img to file location as "webfiles\img.png"
     sendFileToPepper(pathToImg, constants.PEPPER_IMG_LANDING)
 
