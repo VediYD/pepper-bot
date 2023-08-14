@@ -31,12 +31,16 @@ from interactiveControls import showWhichPage, resetEyesAndTablet, set_leds
 import displayGeneration as dg
 from displayGeneration import seekCourseName
 
+from scipy.io import wavfile
 import speech_recognition as sr
 import time
+import numpy as np
 ################################################################################
 ##### Function Handles
 ##########
 
+global link
+link = 'http://10.104.22.24:8891'
 
 def detect():
     seePersonAndGreet()
@@ -46,7 +50,7 @@ def detect():
 def listen():
     record_audio_sd(timer=15, debug=False)
     sendFromPepper()
-    # reduce_noise()
+    reduce_noise(link)
     text = convert_wav_to_text('recordings/recording.wav')
     print('Listen complete, This is what I heard: ', text)
     return text
@@ -217,10 +221,30 @@ def stopListening():
 ##### Convert audio to text
 ##########
 
-### WE WILL USE SOMETHING ELSE WHICH WORKS BETTER
-def reduce_noise(server, path = '', amount = 0.9):
-    """Depreciated"""
-    requests.post(server + '/noise', json={'prop_decrease': amount, 'path': path})
+# Reduces the fan noise in recordings
+def reduce_noise(server, audio_path = 'recordings/recording.wav', save_path = 'recordings/rn_recording.wav', amount = 0.4, vol_increase = 5):
+    # Read the audio file
+    rate, data = wavfile.read(audio_path)
+    print(rate)
+    print(data)
+    
+    # Send to flask
+    reduced_noise = np.array(requests.post(server + '/denoise', json={
+        'rate': rate, 
+        'data': data.tolist(),
+        'prop_decrease': amount, 
+        'vol_increase' : vol_increase
+    }).json()['rn'], dtype=np.int16)
+
+    print(reduced_noise)
+    print(type(reduced_noise))
+
+    np.array(reduced_noise)
+
+    wavfile.write(save_path, rate, reduced_noise)
+
+    print('Saved noise reduced audio file to ' + sav_loc)
+
 
     
 ### WE WILL USE SOMETHING ELSE WHICH WORKS BETTER
@@ -247,7 +271,7 @@ def convert_wav_to_text(audio_path):
 ##### GPT text reciever
 ##########
 def postQueryCourseCodes(_question, sentences):
-    url = 'http://10.104.22.24:8891/getCourses'
+    url = link + '/getCourses'
     data = {"question": _question}
     response = requests.post(url, json=data, stream=True)
     course_codes = response.json()['course_codes']
@@ -278,7 +302,7 @@ def postQueryCourseCodes(_question, sentences):
     
     
 def postQuerySpecificCourse(_question, sentences, rcnt):
-    url = 'http://10.104.22.24:8891/courseInfo'
+    url = link + '/courseInfo'
     data = {"question": _question}
     response = requests.post(url, json=data, stream=True)
     course_summary = str(response.json()['course_summary'])
@@ -302,7 +326,7 @@ def postQuerySpecificCourse(_question, sentences, rcnt):
 
 
 def postQueryToGPTStreamer(_question, sentences):
-    url = 'http://10.104.22.24:8891/getCourses'
+    url = link + '/getCourses'
     data = {"question": _question}
     response = requests.post(url, json=data, stream=True)
     
