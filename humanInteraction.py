@@ -34,6 +34,7 @@ from displayGeneration import seekCourseName
 from scipy.io import wavfile
 import speech_recognition as sr
 import time
+import numpy as np
 ################################################################################
 ##### Function Handles
 ##########
@@ -233,14 +234,16 @@ def stopListening():
 def reduce_noise(server, audio_path = 'recordings/recording.wav', save_path = 'recordings/rn_recording.wav', amount = 0.4, vol_increase = 5):
     # Read the audio file
     rate, data = wavfile.read(audio_path)
+    print(rate)
+    print(data)
     
     # Send to flask
-    reduced_noise = requests.post(server + '/noise', json={
+    reduced_noise = np.array(requests.post(server + '/denoise', json={
         'rate': rate, 
-        'data': data,
+        'data': data.tolist(),
         'prop_decrease': amount, 
         'vol_increase' : vol_increase
-    }).json()
+    }).json()['rn'], dtype=np.int16)
 
     print(reduced_noise)
     print(type(reduced_noise))
