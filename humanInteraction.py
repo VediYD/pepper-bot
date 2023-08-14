@@ -68,23 +68,16 @@ def queryCourseCodes(query, responsesPipeline, eyes):
     # queryCourseCodes returns "repeat" = true if the query search is not successful
     repeat = postQueryCourseCodes(query, responsesPipeline)
     eyes.setEyes("neutral")
-    ic.resetEyesAndTablet()
     return repeat
+
 
 def querySpecificCourse(query, responsesPipeline, eyes, rcnt):
     eyes.setEyes("thinking")
-    ic.showWhichPage("loading")
+    # queryCourseCodes returns "repeat" = true if the query search is not successful
     repeat = postQuerySpecificCourse(query, responsesPipeline, rcnt)
     eyes.setEyes("neutral")
-    ic.resetEyesAndTablet()
     return repeat
 
-def think(query, responsesPipeline, eyes):
-    eyes.start_thinking()
-    ic.showWhichPage("loading")
-    postQueryToGPTStreamer(query, responsesPipeline) #postQuery(_question, sentences):
-    eyes.stop_thinking()
-    ic.resetEyesAndTablet()
 
 ################################################################################
 ##### Detect Person
@@ -140,7 +133,6 @@ def getGreeting():
 ################################################################################
 ##### Listen for Query
 ##########
-
 def timer_callback(timer_cb):
     """To cut off audio collection after given timelimit (hardcoded in record_audio_sd)"""
     timer_cb.set()
@@ -221,7 +213,6 @@ def stopListening():
     recorder.stopMicrophonesRecording()
 
 
-
 ################################################################################
 ##### Convert audio to text
 ##########
@@ -255,50 +246,11 @@ def convert_wav_to_text(audio_path):
 ################################################################################
 ##### GPT text reciever
 ##########
-
-# global c_code
-
-# def say_sentences_thread(sentences):
-#     # df = pd.read_csv('pages/textbyID.csv')
-#     # courseID = df['ID'].tolist()
-#     # check_ID = True
-#     while True:
-#         if len(sentences) != 0:
-
-#             # if check_ID:
-#             #     check_ID = False
-#             #     for word in courseID:
-#             #         if word in sentences[0]:
-#             #             c_code = str(sentences[0].split(',')[0])
-#             #             print('Course Code: ' + c_code)
-
-#             if sentences[0] == "quit":
-#                 break  
-             
-#             speak(sentences[0])
-#             sentences.pop(0)
-
-#         else:
-#             time.sleep(1)
-#             continue
-#     print('Stopped')
-
-# # def receive_responses(response, sentences):
-#     say_thread = threading.Thread(target=say_sentences_thread, args=(sentences,))
-#     say_thread.start()
-#     for line in response.iter_content(chunk_size=None):
-#         x = str(line.decode('utf-8'))
-#         print(x)
-#         sentences.append(x)
-#     say_thread.join()
-
-
 def postQueryCourseCodes(_question, sentences):
     url = 'http://10.104.22.24:8891/getCourses'
     data = {"question": _question}
     response = requests.post(url, json=data, stream=True)
     course_codes = response.json()['course_codes']
-    print(course_codes)
     
     if len(course_codes):
         course_names = [seekCourseName(str(i)) for i in course_codes]
@@ -329,15 +281,14 @@ def postQuerySpecificCourse(_question, sentences, rcnt):
     url = 'http://10.104.22.24:8891/courseInfo'
     data = {"question": _question}
     response = requests.post(url, json=data, stream=True)
-    course_summary = str(response.json()['course_summary']) # retrieve course summary data for speech
+    course_summary = str(response.json()['course_summary'])
+    course_code = str(response.json()['course_code'])
+    print(course_summary, course_code)
     
- #   if len(course_codes): # if at least one course code is returned
-#         dg.generateBasicQRPage(course_codes[0]) # show the QR page for the first
-#         ic.showPage()
-                                                  
-    if len(course_summary): # if at least one course summary is returned
+    if len(course_summary):   # if at least one course summary is returned
+        dg.generateBasicQRPage(course_code) # show the QR page for the first
+        
         speak(course_summary) # say the summary for the first (these should be the same course, but need to confirm how the query function works!)
-        dg.generateBasicQRPage(course_codes[0]) # show the QR page for the first
         ic.showPage()
         return False
     else:
