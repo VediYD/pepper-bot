@@ -252,7 +252,7 @@ def reduce_noise(server, audio_path = 'recordings/recording.wav', save_path = 'r
 
     wavfile.write(save_path, rate, reduced_noise)
 
-    print('Saved noise reduced audio file to ' + sav_loc)
+    print('Saved noise reduced audio file to ' + save_path)
 
 
     
@@ -262,7 +262,7 @@ def convert_wav_to_text(audio_path):
     r = sr.Recognizer()
 
     with sr.AudioFile(audio_path) as source:
-        r.adjust_for_ambient_noise(source)
+        # r.adjust_for_ambient_noise(source)
         audio_data = r.record(source)
 
     try:
