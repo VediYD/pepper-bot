@@ -226,10 +226,12 @@ def stopListening():
 ##### Convert audio to text
 ##########
 
-### WE WILL USE SOMETHING ELSE WHICH WORKS BETTER
-def reduce_noise(server, path = '', amount = 0.9):
-    """Depreciated"""
-    requests.post(server + '/noise', json={'prop_decrease': amount, 'path': path})
+# Reduces the fan noise in recordings
+def reduce_noise(server, audio_path = 'recordings/recording.wav', save_path = 'recordings/rn_recording.wav', amount = 0.4, vol_increase = 5):
+    return requests.post(server + '/noise', json={'audio_loc': audio_path, 
+                                                  'save_loc': save_path, 
+                                                  'prop_decrease': amount, 
+                                                  'vol_increase' : vol_increase}).text
 
     
 ### WE WILL USE SOMETHING ELSE WHICH WORKS BETTER
