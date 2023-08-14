@@ -361,6 +361,16 @@ def generateDefaultPage():
 
 
 ##########
+##### ListeningPage
+##########
+
+
+def generateListeningPage():
+    ### listeningPage.html has no requirements
+    duplicateTemplate("listeningPage.html")
+    sendPage()
+
+##########
 ##### WelcomePage
 ##########
 
@@ -444,3 +454,4 @@ def generateCampusPage():
     campBodyText = "Prepare for the jobs of tomorrow in world-class facilities that facilitate progressive, real-world learning. You'll have access to the tools and technology to turn inspiration into creation."
     campID = "Camp"
     generateBottomBannerWithBodyQRPage(campHeadText, campBodyText, campID)
+
