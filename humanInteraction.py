@@ -253,7 +253,7 @@ def convert_wav_to_text(audio_path):
     r = sr.Recognizer()
 
     with sr.AudioFile(audio_path) as source:
-        r.adjust_for_ambient_noise(source)
+#         r.adjust_for_ambient_noise(source)
         audio_data = r.record(source)
 
     try:
@@ -311,9 +311,8 @@ def postQuerySpecificCourse(_question, sentences, rcnt):
     
     if len(course_summary):   # if at least one course summary is returned
         dg.generateBasicQRPage(course_code) # show the QR page for the first
-        
-        speak(course_summary) # say the summary for the first (these should be the same course, but need to confirm how the query function works!)
         ic.showPage()
+        speak(course_summary) # say the summary for the first (these should be the same course, but need to confirm how the query function works!)
         return False
     else:
         if rcnt < 4:

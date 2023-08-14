@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=962px, height=602px, initial-scale=1, user-scalable=no" name="viewport"/>
+  <title>
+   Site Display
+  </title>
+  <style>
+   .window {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 962px;
+            height: 602px;
+            background-color: rgba(225,225,225,1);
+          }
+          .parallelogram {
+            width: 550px;
+            height: 600px;
+            transform: skew(-16deg);
+            background: #373636;
+            position: absolute;
+            left:-89px;
+            top:0px;
+          }
+          .background-image {
+            position: absolute;
+            top: 0px;
+            left: 360px;
+            width: 600px;
+            height: 400px;
+          }
+          .course-name-text {
+            position: absolute;
+            max-width: 480px;
+            max-height: 150px;
+            top: 18px;
+            left: 26px;
+            color: white;
+            font-family:Arial;
+            font-size:42pt;
+            overflow-y: hidden;
+          }
+          .qr-code-image {
+            position: absolute;
+            top: 240px;
+            left: 40px;
+            width: 320px;
+            height: 320px;            
+            border-radius:25px;
+          }
+          .find-out-text {
+            position: absolute;
+            top: 564px;
+            left: 24px;
+            color: white;
+            font-family:Arial;
+            font-size:20pt;
+          }
+          .arrow {
+            position: absolute;
+            top: 516px;
+            left: 330px;
+            color: #FF9300;
+            font-family:Arial;
+            font-size:46pt;
+            transform: rotate(90deg);
+          }
+           .map {
+            position: absolute;
+            top: 516px;
+            left: 430px;
+            color: #ffd923;
+            font-family:Arial;
+            font-size:46pt;
+          }
+            .under-text {
+            position: absolute;
+            top: 418px;
+            left: 442px;
+            width: 500px;
+            height: 160px;
+            color: black;
+            font-family:Arial;
+            font-size:24pt;
+            overflow-y: hidden;
+          }
+  </style>
+ </head>
+ <body>
+  <div class="container">
+   <div class="window">
+    <img alt="background" class="background-image" src="webfiles/img.png"/>
+   </div>
+   <div class="parallelogram">
+   </div>
+   <div class="course-name-text">
+    Master of Applied Artificial Intelligence (Professional)
+   </div>
+   <img alt="qr-code" class="qr-code-image" src="webfiles/qr.png"/>
+  </div>
+  <div class="find-out-text">
+   Scan here to find out more
+  </div>
+  <div class="arrow">
+   ↶
+  </div>
+  <!-- &#10149; -->
+  <div class="under-text">
+   This course is offered  in Trimester two at Geelong Waurn Ponds Campus and Online
+  </div>
+ </body>
+</html>
