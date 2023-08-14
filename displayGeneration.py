@@ -142,7 +142,7 @@ def seekCourseNameList(courseIDList):
     courseListString = ""
     for courseID in courseIDList:
         courseName = seekCourseName(courseID)
-        courseListString += " \<li\> " + courseName + " \</li\> "
+        courseListString += " <li> " + courseName + " </li>\n"
     return courseListString
 
 
@@ -179,11 +179,11 @@ def textSub(tempText, subText):
     matchSuccess = False
     if target:
         matchSuccess = True
-        target.replace_with(target.replace(tempText, subText))
-
+        target.replace_with(BeautifulSoup(subText))
+        
         # Write the changes back to the HTML file
         with open(constants.FILE_NAME_TEMP, "w") as file:
-            file.write(str(soup))
+            file.write(soup.prettify().encode('utf-8'))
 
 
     if matchSuccess:
@@ -363,6 +363,7 @@ def generateBasicListViewPage(IDList):
     ### basicListViewPage.html requires img, IDList
     duplicateTemplate("basicListViewPage.html")
     courseListText = seekCourseNameList(IDList)
+    print(courseListText)
     subListText(courseListText)
     seekImg(IDList[0])
     sendPage()
