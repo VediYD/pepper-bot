@@ -277,6 +277,15 @@ def check_lowvol(_ques):
 ################################################################################
 ##### GPT text reciever
 ##########
+
+def classifyQuery(query, threshold=0.8):
+    url = link + '/classifyResponse'
+    data = {"sentence": query, "threshold": threshold}
+    response = requests.post(url, json=data)
+    label = response.json()['label']
+    abv_thresh = response.json()['abv_thresh']
+    return label, abv_thresh
+
 def postQueryCourseCodes(_question, sentences):
     _lowvol = check_lowvol(_question)
     if _lowvol:
