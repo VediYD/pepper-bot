@@ -37,10 +37,12 @@ import time
 ##### Function Handles
 ##########
 
+
 def detect():
     seePersonAndGreet()
     print("Detect complete")
 
+    
 def listen():
     record_audio_sd(timer=15, debug=False)
     sendFromPepper()
@@ -49,29 +51,31 @@ def listen():
     print('Listen complete, This is what I heard: ', text)
     return text
 
+
 def speak(text):
     tts = ALProxy("ALTextToSpeech", constants.PEPPER_HOST, constants.PEPPER_PORT)
     tts.say(text)
 
+    
 def shush():
     tts = ALProxy("ALTextToSpeech", constants.PEPPER_HOST, constants.PEPPER_PORT)
     tts.stopAll()
     
 
 def queryCourseCodes(query, responsesPipeline, eyes):
-    eyes.start_thinking()
+    eyes.setEyes("thinking")
     ic.showWhichPage("loading")
     # queryCourseCodes returns "repeat" = true if the query search is not successful
     repeat = postQueryCourseCodes(query, responsesPipeline)
-    eyes.stop_thinking()
+    eyes.setEyes("neutral")
     ic.resetEyesAndTablet()
     return repeat
 
 def querySpecificCourse(query, responsesPipeline, eyes, rcnt):
-    eyes.start_thinking()
+    eyes.setEyes("thinking")
     ic.showWhichPage("loading")
     repeat = postQuerySpecificCourse(query, responsesPipeline, rcnt)
-    eyes.stop_thinking()
+    eyes.setEyes("neutral")
     ic.resetEyesAndTablet()
     return repeat
 
@@ -117,12 +121,10 @@ def seePersonAndGreet():
         speak(greeting)
 
 
-
 def getGreeting():
     """Get greeting from other file as basicGreeting ("Hello, I'm Pepper") + basicTopicPrompts ("Ask me about...")"""
     greeting = random.choice(prompts.basicGreetings) + random.choice(prompts.basicTopicPrompts)
     return greeting
-
 
 
 # ################################################################################
@@ -143,6 +145,7 @@ def timer_callback(timer_cb):
     """To cut off audio collection after given timelimit (hardcoded in record_audio_sd)"""
     timer_cb.set()
     
+
 def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav", debug=False):
     """complete audio subscription, detection, recording start and stop"""
     path_name = os.path.join(path_name)
@@ -212,6 +215,7 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
             sound_detector.unsubscribe("sound_detector")
             break
 
+            
 def stopListening():
     recorder = ALProxy("ALAudioRecorder", constants.PEPPER_HOST, constants.PEPPER_PORT)
     recorder.stopMicrophonesRecording()
@@ -227,6 +231,7 @@ def reduce_noise(server, path = '', amount = 0.9):
     """Depreciated"""
     requests.post(server + '/noise', json={'prop_decrease': amount, 'path': path})
 
+    
 ### WE WILL USE SOMETHING ELSE WHICH WORKS BETTER
 def convert_wav_to_text(audio_path):
     """Depreciated"""
@@ -245,7 +250,6 @@ def convert_wav_to_text(audio_path):
         return "Could not request results from Google Speech Recognition service: " + str(e)
     except Exception as e:
         return "An error occurred during speech recognition: " + str(e)
-
 
 
 ################################################################################
@@ -288,6 +292,7 @@ def convert_wav_to_text(audio_path):
 #         sentences.append(x)
 #     say_thread.join()
 
+
 def postQueryCourseCodes(_question, sentences):
     url = 'http://10.104.22.24:8891/getCourses'
     data = {"question": _question}
@@ -297,7 +302,7 @@ def postQueryCourseCodes(_question, sentences):
     
     if len(course_codes):
         course_names = [seekCourseName(str(i)) for i in course_codes]
-#         dg.generateBasicListViewPage([str(i) for i in course_codes[:5]])                    
+        dg.generateBasicListViewPage([str(i) for i in course_codes[:5]])                    
         ic.showPage()
         if len(course_names) == 0:
             ### redundant? but just in case
@@ -324,15 +329,16 @@ def postQuerySpecificCourse(_question, sentences, rcnt):
     url = 'http://10.104.22.24:8891/courseInfo'
     data = {"question": _question}
     response = requests.post(url, json=data, stream=True)
-#     course_codes = response.json()['course_codes'] # retrieve course codes list for display
     course_summary = str(response.json()['course_summary']) # retrieve course summary data for speech
     
-    if len(course_codes): # if at least one course code is returned
+ #   if len(course_codes): # if at least one course code is returned
 #         dg.generateBasicQRPage(course_codes[0]) # show the QR page for the first
 #         ic.showPage()
                                                   
     if len(course_summary): # if at least one course summary is returned
         speak(course_summary) # say the summary for the first (these should be the same course, but need to confirm how the query function works!)
+        dg.generateBasicQRPage(course_codes[0]) # show the QR page for the first
+        ic.showPage()
         return False
     else:
         if rcnt < 4:
@@ -358,6 +364,7 @@ def postQueryToGPTStreamer(_question, sentences):
         sentences.append(x)
     say_thread.join()
 
+    
 def say_sentences_thread(sentences):
     counter = 0
     spoken = False

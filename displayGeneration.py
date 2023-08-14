@@ -142,7 +142,7 @@ def seekCourseNameList(courseIDList):
     courseListString = ""
     for courseID in courseIDList:
         courseName = seekCourseName(courseID)
-        courseListString += " <li> " + courseName + " </li> "
+        courseListString += " \<li\> " + courseName + " \</li\> "
     return courseListString
 
 
