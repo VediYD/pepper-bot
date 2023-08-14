@@ -1,114 +1,187 @@
-<!DOCTYPE html>
 <html>
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=962px, height=602px, initial-scale=1, user-scalable=no" name="viewport"/>
-  <title>
-   Site Display
-  </title>
-  <style>
-   .window {
+    <head>
+        <title>Water Loader Animation</title>
+        <meta name="viewport" content="width=device-width">
+      <style>
+        .window {
             position: absolute;
             top: 0px;
             left: 0px;
-            width: 962px;
-            height: 602px;
-            background-color: rgba(225,225,225,1);
-          }
-          .parallelogram {
-            width: 550px;
+            width: 960px;
             height: 600px;
-            transform: skew(-16deg);
             background: #373636;
+        }
+        .load-text {
+            width: 460px;
+            height: 80px;
+            padding:18px;
+            text-align: center;
+            margin: auto;
             position: absolute;
-            left:-89px;
-            top:0px;
-          }
-          .background-image {
-            position: absolute;
-            top: 0px;
-            left: 360px;
-            width: 600px;
-            height: 400px;
-          }
-          .course-name-text {
-            position: absolute;
-            max-width: 480px;
-            max-height: 150px;
-            top: 18px;
-            left: 26px;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #0b7161;
             color: white;
             font-family:Arial;
-            font-size:42pt;
-            overflow-y: hidden;
-          }
-          .qr-code-image {
-            position: absolute;
-            top: 240px;
-            left: 40px;
-            width: 320px;
-            height: 320px;            
-            border-radius:25px;
-          }
-          .find-out-text {
-            position: absolute;
-            top: 564px;
-            left: 24px;
-            color: white;
-            font-family:Arial;
-            font-size:20pt;
-          }
-          .arrow {
-            position: absolute;
-            top: 516px;
-            left: 330px;
-            color: #FF9300;
-            font-family:Arial;
             font-size:46pt;
-            transform: rotate(90deg);
-          }
-           .map {
-            position: absolute;
-            top: 516px;
-            left: 430px;
-            color: #ffd923;
-            font-family:Arial;
-            font-size:46pt;
-          }
-            .under-text {
-            position: absolute;
-            top: 418px;
-            left: 442px;
-            width: 500px;
-            height: 160px;
-            color: black;
-            font-family:Arial;
-            font-size:24pt;
             overflow-y: hidden;
+            border-radius:60px;
           }
-  </style>
- </head>
- <body>
-  <div class="container">
-   <div class="window">
-    <img alt="background" class="background-image" src="webfiles/img.png"/>
-   </div>
-   <div class="parallelogram">
-   </div>
-   <div class="course-name-text">
-    Master of Applied Artificial Intelligence (Professional)
-   </div>
-   <img alt="qr-code" class="qr-code-image" src="webfiles/qr.png"/>
-  </div>
-  <div class="find-out-text">
-   Scan here to find out more
-  </div>
-  <div class="arrow">
-   ↶
-  </div>
-  <!-- &#10149; -->
-  <div class="under-text">
-   This course is offered  in Trimester two at Geelong Waurn Ponds Campus and Online
-  </div>
- </body>
+        .container {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+}
+        .dash {
+          margin: 0 30px;
+          width: 100px;
+          height: 40px;
+          border-radius: 20px;
+}
+
+        .uno {
+          background: #58BCAF;
+          margin-right: -36px;
+          transform-origin: center left;
+          animation: spin 4.5s linear infinite;  
+          }
+
+        .dos {
+          background: #C74298;
+          transform-origin: center right;
+          animation: spin2 4.5s linear infinite;
+          animation-delay: .3s;
+          }
+
+        .tres {
+          background: #007D98;
+          transform-origin: center right;
+          animation: spin3 4.5s linear infinite;
+          animation-delay: .45s;
+          }
+
+        .cuatro {
+          background: #FF9300;
+          transform-origin: center right;
+          animation: spin4 4.5s linear infinite;
+          animation-delay: .6s;
+          }
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(360deg);
+  }
+  30% {
+    transform: rotate(370deg);
+  }
+  35% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin2 {
+  0% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-180deg);
+  }
+  35% {
+    transform: rotate(-190deg);
+  }
+  40% {
+    transform: rotate(-180deg);
+  }
+  78% {
+    transform: rotate(-180deg);
+  }
+  95% {
+    transform: rotate(-360deg);
+  }
+  98% {
+    transform: rotate(-370deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes spin3 {
+  0% {
+    transform: rotate(0deg);
+  }
+  27% {
+    transform: rotate(0deg);  
+  }
+  40% {
+    transform: rotate(180deg);
+  }
+  45% {
+    transform: rotate(190deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  62% {
+    transform: rotate(180deg);
+  }
+  75% {
+    transform: rotate(360deg);
+  }
+  80% {
+    transform: rotate(370deg);
+  }
+  85% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin4 {
+  0% {
+    transform: rotate(0deg);
+  }
+  38% {
+    transform: rotate(0deg);
+  }
+  60% {
+    transform: rotate(-360deg);
+  }
+  65% {
+    transform: rotate(-370deg);
+  }
+  75% {
+    transform: rotate(-360deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+      </style>
+</head>
+    <body>
+        <div class="window">
+          <div class="load-text"> I'm thinking... </div>
+        <div class="container">
+          <div class="dash uno"></div>
+          <div class="dash dos"></div>
+          <div class="dash tres"></div>
+          <div class="dash cuatro"></div>
+        </div>
+        </div>
+    </body>
 </html>
