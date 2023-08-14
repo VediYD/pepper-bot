@@ -243,27 +243,34 @@ def reduce_noise(server, audio_path = 'recordings/recording.wav', save_path = 'r
 
     print('Saved noise reduced audio file to ' + save_path)
 
-
-    
-### WE WILL USE SOMETHING ELSE WHICH WORKS BETTER
 def convert_wav_to_text(audio_path):
-    """Depreciated"""
-    r = sr.Recognizer()
-
-    with sr.AudioFile(audio_path) as source:
-        # r.adjust_for_ambient_noise(source)
-        audio_data = r.record(source)
-
     try:
-        text = r.recognize_google(audio_data)
-        return text
-    except sr.UnknownValueError:
-        return "Speech recognition could not understand audio"
-    except sr.RequestError as e:
-        return "Could not request results from Google Speech Recognition service: " + str(e)
-    except Exception as e:
-        return "An error occurred during speech recognition: " + str(e)
+        # Get the audio file path
+        data = request.json
+        path = str(data['audio_loc'])
+        engine = str(data['engine'])
 
+        # Initialize recognizer class (for recognizing the speech)
+        r = sr.Recognizer()
+
+        # Convert the audio to speech
+        with sr.AudioFile(path) as source:
+            # Listen for the data (load audio to memory)
+            audio_data = r.record(source)
+            # Recognize the text
+            text = None
+            if engine == 'google':
+                text = r.recognize_google(audio_data)
+            elif engine == 'sphinx':
+                text = r.recognize_sphinx(audio_data)
+
+        return text
+
+    except Exception as e:
+        return '%low_volume_error%'
+
+
+def 
 
 ################################################################################
 ##### GPT text reciever
