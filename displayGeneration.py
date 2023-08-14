@@ -136,7 +136,7 @@ def seekCourseAndLocationText(ID):
 def seekCourseNameList(courseIDList):
     """find CourseName for all items in a list, by ID in library, and return as formatted HTML list"""
     courseListString = ""
-    for courseID in list:
+    for courseID in courseIDList:
         courseName = seekCourseName(courseID)
         courseListString += " <li> " + courseName + " </li> "
     return courseListString
