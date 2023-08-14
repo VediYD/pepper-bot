@@ -47,29 +47,30 @@ def noise_reducer():
 
 @app.route('/speechtotext', methods=['POST'])
 def speech_to_text():
-    # Get the audio file path
-    data = request.json
-    path = str(data['audio_loc'])
-    engine = str(data['engine'])
+    try:
+        # Get the audio file path
+        data = request.json
+        path = str(data['audio_loc'])
+        engine = str(data['engine'])
 
-    # Initialize recognizer class (for recognizing the speech)
-    r = sr.Recognizer()
+        # Initialize recognizer class (for recognizing the speech)
+        r = sr.Recognizer()
 
-    # Convert the audio to speech
-    with sr.AudioFile(path) as source:
-        # Listen for the data (load audio to memory)
-        audio_data = r.record(source)
-        # Recognize the text
-        text = None
-        if engine == 'google':
-            text = r.recognize_google(audio_data)
-        elif engine == 'sphinx':
-            text = r.recognize_sphinx(audio_data)
-        elif engine == 'ibm':
-            text = r.recognize_ibm(audio_data)
+        # Convert the audio to speech
+        with sr.AudioFile(path) as source:
+            # Listen for the data (load audio to memory)
+            audio_data = r.record(source)
+            # Recognize the text
+            text = None
+            if engine == 'google':
+                text = r.recognize_google(audio_data)
+            elif engine == 'sphinx':
+                text = r.recognize_sphinx(audio_data)
 
-    return text
+        return text
 
+    except Exception as e:
+        return '%low_volume_error%'
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8891)
