@@ -407,6 +407,18 @@ def generateListeningPage():
     duplicateTemplate("listeningPage.html")
     sendPage()
 
+
+##########
+##### ErrorPage
+##########
+
+
+def generateErrorPage():
+    """A dynamic sorry screen with a cute pulsing animation"""
+    ### errorPage.html has no requirements
+    duplicateTemplate("errorPage.html")
+    sendPage()
+
 ##########
 ##### WelcomePage
 ##########
