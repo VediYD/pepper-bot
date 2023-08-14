@@ -32,7 +32,6 @@ import displayGeneration as dg
 from displayGeneration import seekCourseName
 
 from scipy.io import wavfile
-import noisereduce as nr
 import speech_recognition as sr
 import time
 ################################################################################
@@ -241,7 +240,10 @@ def reduce_noise(server, audio_path = 'recordings/recording.wav', save_path = 'r
         'data': data,
         'prop_decrease': amount, 
         'vol_increase' : vol_increase
-    })
+    }).json()
+
+    print(reduced_noise)
+    print(type(reduced_noise))
 
     np.array(reduced_noise)
 
