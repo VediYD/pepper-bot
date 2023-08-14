@@ -87,16 +87,13 @@ def handle_question():
 def noise_reducer():
     # Get the audio file path
     data = request.json
-    path = str(data['audio_loc'])
-    sav_loc = str(data['save_loc'])
+    rate = str(data['rate'])
+    data = str(data['data'])
     prop_decrease = float(data['prop_decrease'])
     vol_increase = float(data['vol_increase'])
-
-    # Load Data
-    rate, data = wavfile.read(path)
     
     # Noise Data
-    n_rate, n_data = wavfile.read("recordings/noise.wav")
+    _, n_data = wavfile.read("recordings/noise.wav")
 
     # Reduce noise
     reduced_noise = nr.reduce_noise(y=data, 
@@ -110,15 +107,7 @@ def noise_reducer():
 
     # Convert to 16-bit data
     reduced_noise = reduced_noise.astype(np.int16)
-
-    # Save the output
-    if sav_loc != '':
-        wavfile.write(sav_loc, rate, reduced_noise)
-    else:
-        sav_loc = "recordings/rn_recording.wav"
-        wavfile.write(sav_loc, rate, reduced_noise)
-
-    return 'Saved noise reduced audio file to ' + sav_loc
+    return reduced_noise
 
 
 if __name__ == '__main__':
