@@ -2,24 +2,15 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=960px, height=600px, initial-scale=1, user-scalable=no">
+        <meta name="viewport" content="width=962px, height=602px, initial-scale=1, user-scalable=no">
         <title>Site Display</title>
-        <script type="text/javascript">
-          function textLoad() {
-            var courseName = "replaceCourseText";
-            var locationText = "replaceLocationText";
-            document.getElementById("courseTextId").innerHTML = courseName;
-            document.getElementById("locationTextId").innerHTML = locationText;
-          }
-          
-        </script>
         <style> 
           .window {
             position: absolute;
             top: 0px;
             left: 0px;
-            width: 960px;
-            height: 600px;
+            width: 962px;
+            height: 602px;
             background-color: rgba(225,225,225,1);
           }
           .parallelogram {
@@ -46,7 +37,7 @@
             left: 26px;
             color: white;
             font-family:Arial;
-            font-size:46pt;
+            font-size:42pt;
             overflow-y: hidden;
           }
           .qr-code-image {
@@ -96,16 +87,16 @@
 
         </style>
     </head>
-    <body onload="textLoad()">
+    <body>
       <div class="container">
         <div class="window">
           <img class="background-image" src="webfiles/img.png" alt="background"             > </div>
           <div class="parallelogram"></div>
-          <div class="course-name-text"><span id="courseTextId"></span></div>
+          <div class="course-name-text"> replaceCourseText </div>
           <img class="qr-code-image" src="webfiles/qr.png" alt="qr-code"> </div>
           <div class="find-out-text"> Scan here to find out more </div>
           <div class="arrow"> &#8630; </div> <!-- &#10149; -->
-          <div class="under-text"><span id="locationTextId"></span></div>
+          <div class="under-text"> replaceLocationText </div>
         </div>
       </div>
     </body>

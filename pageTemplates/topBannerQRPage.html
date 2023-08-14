@@ -2,27 +2,18 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=960px, height=600px, initial-scale=1, user-scalable=no">
+        <meta name="viewport" content="width=962px, height=602px, initial-scale=1, user-scalable=no">
         <title>Site Display</title>
-        <script type="text/javascript">
-          function textLoad() {
-            var courseName = "replaceCourseText";
-            var locationText = "replaceLocationText";
-            document.getElementById("courseTextId").innerHTML = courseName;
-            document.getElementById("locationTextId").innerHTML = locationText;
-          }
-          
-        </script>
         <style> 
           .window {
             position: absolute;
             top: 0px;
             left: 0px;
-            width: 960px;
-            height: 600px;
+            width: 962px;
+            height: 602px;
           }
           .banner {
-            width: 960px;
+            width: 962px;
             height: 200px;
             background: #373636;
             position: absolute;
@@ -42,8 +33,8 @@
             position: absolute;
             top: 200px;
             left: 360px;
-            width: 600px;
-            height: 400px;
+            width: 602px;
+            height: 402px;
           }
           .course-name-text {
             position: absolute;
@@ -93,18 +84,18 @@
 
         </style>
     </head>
-    <body onload="textLoad()">
+    <body>
       <div class="container">
         <div class="window">
           <div class="banner"></div>
           <img class="background-image" src="webfiles/img.png" alt="background"             > </div>
           <div class="parallelogram"></div>
           <div class="banner"></div>
-          <div class="course-name-text"><span id="courseTextId"></span></div>
+          <div class="course-name-text"><span id="courseTextId"> replaceCourseText </span></div>
           <img class="qr-code-image" src="webfiles/qr.png" alt="qr-code"> </div>
           <div class="find-out-text"> Scan here to find out more </div>
           <div class="arrow"> &#8630; </div> <!-- &#10149; -->
-          <div class="under-text"><span id="locationTextId"></span></div>
+          <div class="under-text"><span id="locationTextId"> replaceLocationText </span></div>
         </div>
       </div>
     </body>

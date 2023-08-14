@@ -2,33 +2,24 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=960px, height=600px, initial-scale=1, user-scalable=no">
+        <meta name="viewport" content="width=962px, height=602px, initial-scale=1, user-scalable=no">
         <title>Site Display</title>
         <!-- Max 54 char in heading-->
-        <script type="text/javascript">
-          function textLoad() {
-            var headText = "replaceHeadText";
-            var bodyText = "replaceBodyText";
-            document.getElementById("headTextId").innerHTML = headText;
-            document.getElementById("bodyTextId").innerHTML = bodyText;
-          }
-          
-        </script>
         <style> 
           .window {
             position: absolute;
             top: 0px;
             left: 0px;
-            width: 960px;
-            height: 600px;
+            width: 962px;
+            height: 602px;
           }
           .lower-banner {
             width: 960px;
-            height: 120px;
+            height: 162px;
             background: #373636;
             position: absolute;
             left:0px;
-            top:480px;
+            top:440px;
           }
           .background-image {
             background-image: url("webfiles/img.png");
@@ -39,7 +30,7 @@
             top: 0px;
             left: 0px;
             width: 960px;
-            height: 480px;
+            height: 440px;
           }
           .float-box  {
             position: absolute;
@@ -55,8 +46,8 @@
           .head-text {
             position: absolute;
             width: 532px;
-            height: 92px;
-            top: 494px;
+            height: 132px;
+            top: 454px;
             left: 414px;
             color: white;
             font-family:Arial;
@@ -91,17 +82,16 @@
 
         </style>
     </head>
-    <body onload="textLoad()">
+    <body>
       <div class="container">
         <div class="window">
           <div class="lower-banner"></div>
           <div class="background-image"> </div>
           <div class="float-box"></div>
-          <div class="head-text"><span id="headTextId"></span></div>
+          <div class="head-text"> replaceHeadText </div>
           <img class="qr-code-image" src="webfiles/qr.png" alt="qr-code"> </div>
           <div class="find-out-text"> Scan here to find out more </div>
           <div class="arrow"> &#8630; </div> <!-- &#10149; -->
-
         </div>
       </div>
     </body>
