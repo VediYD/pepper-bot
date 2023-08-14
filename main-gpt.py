@@ -11,6 +11,11 @@ from pandas                     import read_csv
 from time                       import time, sleep
 from flask                      import Flask, request, jsonify, Response
 import threading
+import numpy                    as np
+from scipy.io                   import wavfile
+import noisereduce              as nr
+
+
 print('imports complete')
 
 # load course data
@@ -43,10 +48,10 @@ def getCourseInfo(query):
     doc, score = db.similarity_search_with_score(query, 10)[0]
     print(doc, score)
     
-    if score <= 0.2:
-        return doc.metadata['o_summarized']
+    if score <= 0.3:
+        return doc.metadata['o_summarized'], doc.metadata['course_code']
     else:
-        return ''
+        return '', ''
 
 
 # initialize app
@@ -77,11 +82,38 @@ def handle_question():
     req = request.get_json()
     question = req['question']
     
-    summary = getCourseInfo(question)
-    print(summary)
+    summary, code = getCourseInfo(question)
+    print(summary, code)
     
     # Return the answer as a JSON response
-    return jsonify(course_summary=summary)
+    return jsonify(course_summary=summary, course_code=code)
+
+
+@app.route('/denoise', methods=['POST'])
+def noise_reducer():
+    # Get the audio file path
+    req = request.json
+    rate = int(req['rate'])
+    _data = np.array(req['data'])
+    prop_decrease = float(req['prop_decrease'])
+    vol_increase = float(req['vol_increase'])
+    
+    # Noise Data
+    _, n_data = wavfile.read("recordings/noise.wav")
+
+    # Reduce noise
+    reduced_noise = nr.reduce_noise(y=_data, 
+                                    sr=rate, 
+                                    y_noise=n_data,
+                                    prop_decrease=prop_decrease, 
+                                    n_jobs=-1)
+
+    # Increase volume (make up for the volume reduction)
+    reduced_noise = reduced_noise * vol_increase
+
+    # Convert to 16-bit data
+    reduced_noise = reduced_noise.astype(np.int16).tolist()
+    return jsonify({'rn': reduced_noise})
 
 
 if __name__ == '__main__':
