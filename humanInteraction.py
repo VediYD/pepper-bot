@@ -1,4 +1,4 @@
-from urllib import response
+# from urllib import response
 from naoqi import ALProxy
 
 # ### Custom File Handing Imports ###
@@ -28,7 +28,10 @@ from fileTransfer import sendFromPepper
 import interactiveControls as ic
 from interactiveControls import showWhichPage, resetEyesAndTablet, set_leds
 
+from displaygeneration import seekCourseName
+
 import speech_recognition as sr
+import time
 ################################################################################
 ##### Function Handles
 ##########
@@ -52,10 +55,26 @@ def speak(text):
 def shush():
     tts = ALProxy("ALTextToSpeech", constants.PEPPER_HOST, constants.PEPPER_PORT)
     tts.stopAll()
+    
+
+def queryCourseCodes(query, responsesPipeline, eyes):
+    eyes.start_thinking()
+    ic.showWhichPage("loading")
+    repeat = postQueryCourseCodes(query, responsesPipeline)
+    eyes.stop_thinking()
+    ic.resetEyesAndTablet()
+    return repeat
+
+def querySpecificCourse(query, responsesPipeline, eyes, rcnt):
+    eyes.start_thinking()
+    ic.showWhichPage("loading")
+    repeat = postQuerySpecificCourse(query, responsesPipeline, rcnt)
+    eyes.stop_thinking()
+    ic.resetEyesAndTablet()
+    return repeat
 
 def think(query, responsesPipeline, eyes):
     eyes.start_thinking()
-    # show_on_tablet('Demo/pageTemplates/dashLoader.html')
     ic.showWhichPage("loading")
     postQueryToGPTStreamer(query, responsesPipeline) #postQuery(_question, sentences):
     eyes.stop_thinking()
@@ -214,7 +233,7 @@ def convert_wav_to_text(audio_path):
         audio_data = r.record(source)
 
     try:
-        text = r.recognize_sphinx(audio_data)
+        text = r.recognize_google(audio_data)
         return text
     except sr.UnknownValueError:
         return "Speech recognition could not understand audio"
@@ -265,12 +284,47 @@ def convert_wav_to_text(audio_path):
 #         sentences.append(x)
 #     say_thread.join()
 
-def postQueryToGPTStreamer(_question, sentences):
-    url = 'http://10.104.22.24:8891/courseInfo' # url = "http://{}:{}/courseInfo".format(GPT_HOST, GPT_PORT)
+def postQueryCourseCodes(_question, sentences):
+    url = 'http://10.104.22.24:8891/getCourses'
     data = {"question": _question}
-    response = requests.post(url, json=data, stream=True) #r
-    # receive_responses(r, sentences) # def receive_responses(response, sentences):
+    response = requests.post(url, json=data, stream=True)
+    course_codes = response.json()['course_codes']
+    
+    if len(course_codes):
+        course_names = [seekCourseName(str(i)) for i in course_codes]
+        speak('I have found {} courses for you.'.format(len(course_codes)))
+        speak('Here are a few that you might find interesting.')
+        speak(str(', '.join(course_names[:3])))
+        speak('Do you wanna know more about a specific course?')
+        return False
+    else:
+        speak('I am unable to find any relevant courses for you. Can you please repeat your query?')
+        return True
+    
+    
+def postQuerySpecificCourse(_question, sentences, rcnt):
+    url = 'http://10.104.22.24:8891/courseInfo'
+    data = {"question": _question}
+    response = requests.post(url, json=data, stream=True)
+    course_summary = str(response.json()['course_summary'])
+    
+    if len(course_summary):
+        speak(course_summary)
+        return False
+    else:
+        if rcnt < 4:
+            speak('Sorry could you please repeat that?')
+            return True
+        else:
+            speak('Sorry I am unable to understand. My processors might be running hot. I need some rest. But thank you for interacting with me.')
+            return False
 
+
+def postQueryToGPTStreamer(_question, sentences):
+    url = 'http://10.104.22.24:8891/getCourses'
+    data = {"question": _question}
+    response = requests.post(url, json=data, stream=True)
+    
     # Sentences Thread
     say_thread = threading.Thread(target=say_sentences_thread, args=(sentences,))
     say_thread.start()
@@ -281,13 +335,21 @@ def postQueryToGPTStreamer(_question, sentences):
     say_thread.join()
 
 def say_sentences_thread(sentences):
+    counter = 0
+    spoken = False
     while True:
         if len(sentences) != 0:
             if sentences[0] == "quit":
                 break  
             speak(sentences[0])
             sentences.pop(0)
+            counter = time.time()
+            spoken = True
         else:
-            time.sleep(1)
+            # wait only for 10 seconds after last spoken
+            if ((time.time() - counter) > 10) & spoken:
+                break
+            else:
+                time.sleep(1)
             continue
     print('Stopped')
