@@ -101,6 +101,8 @@ def showWhichPage(page):
         dg.generateDefaultPage()
     elif page == "loading":
         dg.generateDashLoader()
+    elif page == "listening":
+        dg.generateListeningPage()
     elif page == "Cwel":
         dg.generateWelcomePage()
     elif page == "Cstu":

@@ -133,6 +133,15 @@ def seekCourseAndLocationText(ID):
         locationText = "not found"
     return courseName, locationText
 
+def seekCourseNameList(courseIDList):
+    """find CourseName for all items in a list, by ID in library, and return as formatted HTML list"""
+    courseListString = ""
+    for courseID in list:
+        courseName = seekCourseName(courseID)
+        courseListString += " <li> " + courseName + " </li> "
+    return courseListString
+
+
 
 ##########
 ##### Step 3: Update text elements in new html file
@@ -225,6 +234,13 @@ def subCourseAndLocationText(subtexts):
     textSub(tempCourseText, subCourseText)
     textSub(tempLocationText, subLocationText)
 
+### text sub for specific types: list text
+# relevant for other templates: "basicListViewPage.html"
+def subListText(subText):
+    """text sub for specific types: list text"""
+    tempText = "replaceListText"
+    textSub(tempText, subText)
+
 
 ##########
 ##### Step 4: Get Visual Elements from local folders
@@ -294,6 +310,7 @@ def seekAndSend(ID):
 
 
 def generateBasicQRPage(ID):
+    """basicQRPage.html requires img, qr, courseText, locationText. Shows courseText as large text across half-width (left) top-of-page banner, wrapped for up to 3 lines"""
     ### basicQRPage.html requires img, qr, courseText, locationText
     duplicateTemplate("basicQRPage.html")
     subCourseAndLocationText(seekCourseAndLocationText(ID))
@@ -303,6 +320,7 @@ def generateBasicQRPage(ID):
 
 
 def generateTopBannerQRPage(ID):
+    """topBannerQRPage.html requires img, qr, courseText, locationText. Shows courseText as large text across full-width top-of-page banner"""
     ### topBannerQRPage.html requires img, qr, courseText, locationText
     duplicateTemplate("topBannerQRPage.html")
     subCourseText(seekCourseName(ID))
@@ -311,6 +329,7 @@ def generateTopBannerQRPage(ID):
 
 
 def generateBottomBannerQRPage(headText, ID):
+    """bottomBannerQRPage.html requires img, qr, headText. Shows headtext as large text across half-width (right) bottom-of-page banner"""
     ### bottomBannerQRPage.html requires img, qr, headText
     duplicateTemplate("bottomBannerQRPage.html")
     subHeadText(headText)
@@ -318,6 +337,7 @@ def generateBottomBannerQRPage(headText, ID):
 
 
 def generateBottomBannerWithBodyQRPage(headText, bodyText, ID):
+    """bottomBannerWithBodyQRPage.html requires img, qr, headText, bodyText. Shows headtext as large text across half-width (right) bottom-of-page banner, with bodyText beneath"""
     ### bottomBannerWithBodyQRPage.html requires img, qr, headText, bodyText
     duplicateTemplate("bottomBannerWithBodyQRPage.html")
     subHeadText(headText)
@@ -326,11 +346,21 @@ def generateBottomBannerWithBodyQRPage(headText, bodyText, ID):
 
 
 def generateOnlyTextAndImgPage(headText, bodyText, ID):
+    """onlyTextAndImgPage.html requires img, headText, bodyText. Shows fullscreen img with partially transparent textbox on bottom-left"""
     ### onlyTextAndImgPage.html requires img, headText, bodyText
     duplicateTemplate("onlyTextAndImgPage.html")
     subHeadText(headText)
     subBodyText(bodyText)
     seekImg(ID)
+    sendPage()
+
+def generateBasicListViewPage(IDList):
+    """basicListViewPage.html requires img, IDList. Pulls img from 1st ID. Vertical space lists maximum 5 courses"""
+    ### basicListViewPage.html requires img, IDList
+    duplicateTemplate("basicListViewPage.html")
+    courseListText = seekCourseNameList(IDList)
+    subListText(courseListText)
+    seekImg(IDList[0])
     sendPage()
 
 
@@ -344,6 +374,7 @@ def generateOnlyTextAndImgPage(headText, bodyText, ID):
 
 
 def generateDashLoader():
+    """A dynamic loading screen with a cute looping animation"""
     ### dashLoader.html has no requirements
     duplicateTemplate("dashLoader.html")
     sendPage()
@@ -355,10 +386,22 @@ def generateDashLoader():
 
 
 def generateDefaultPage():
+    """A static loading screen with 5 prompts"""
     ### defaultPage.html has no requirements
     duplicateTemplate("defaultPage.html")
     sendPage()
 
+
+##########
+##### ListeningPage
+##########
+
+
+def generateListeningPage():
+    """A dynamic listening screen with a cute pulsing animation"""
+    ### listeningPage.html has no requirements
+    duplicateTemplate("listeningPage.html")
+    sendPage()
 
 ##########
 ##### WelcomePage
@@ -444,3 +487,4 @@ def generateCampusPage():
     campBodyText = "Prepare for the jobs of tomorrow in world-class facilities that facilitate progressive, real-world learning. You'll have access to the tools and technology to turn inspiration into creation."
     campID = "Camp"
     generateBottomBannerWithBodyQRPage(campHeadText, campBodyText, campID)
+
