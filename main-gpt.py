@@ -115,6 +115,32 @@ def noise_reducer():
     reduced_noise = reduced_noise.astype(np.int16).tolist()
     return jsonify({'rn': reduced_noise})
 
+@app.route('/noise', methods=['POST'])
+def noise_reducer():
+    # Get the audio file path
+    data = request.json
+    rate = str(data['rate'])
+    data = str(data['data'])
+    prop_decrease = float(data['prop_decrease'])
+    vol_increase = float(data['vol_increase'])
+    
+    # Noise Data
+    _, n_data = wavfile.read("recordings/noise.wav")
+
+    # Reduce noise
+    reduced_noise = nr.reduce_noise(y=data, 
+                                    sr=rate, 
+                                    y_noise=n_data,
+                                    prop_decrease=prop_decrease, 
+                                    n_jobs=-1)
+
+    # Increase volume (make up for the volume reduction)
+    reduced_noise = reduced_noise * vol_increase
+
+    # Convert to 16-bit data
+    reduced_noise = reduced_noise.astype(np.int16)
+    return reduced_noise
+
 
 if __name__ == '__main__':
     print('Spinning Servers')
