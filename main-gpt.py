@@ -109,6 +109,17 @@ def noise_reducer():
     reduced_noise = reduced_noise.astype(np.int16).tolist()
     return jsonify({'rn': reduced_noise})
 
+@app.route('/classifyResponse', methods=['POST'])
+def classify_response():
+    res
+
+    try:
+        model = tf.keras.models.load_model('Model/Classification_93.keras')
+    except Exception as e:
+        return e
+
+    
+
 
 if __name__ == '__main__':
     print('Spinning Servers')
