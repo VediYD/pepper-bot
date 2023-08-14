@@ -245,11 +245,6 @@ def reduce_noise(server, audio_path = 'recordings/recording.wav', save_path = 'r
 
 def convert_wav_to_text(audio_path):
     try:
-        # Get the audio file path
-        data = request.json
-        path = str(data['audio_loc'])
-        engine = str(data['engine'])
-
         # Initialize recognizer class (for recognizing the speech)
         r = sr.Recognizer()
 
@@ -316,9 +311,8 @@ def postQuerySpecificCourse(_question, sentences, rcnt):
     
     if len(course_summary):   # if at least one course summary is returned
         dg.generateBasicQRPage(course_code) # show the QR page for the first
-        
-        speak(course_summary) # say the summary for the first (these should be the same course, but need to confirm how the query function works!)
         ic.showPage()
+        speak(course_summary) # say the summary for the first (these should be the same course, but need to confirm how the query function works!)
         return False
     else:
         if rcnt < 4:
