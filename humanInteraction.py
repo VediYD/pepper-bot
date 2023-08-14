@@ -28,7 +28,8 @@ from fileTransfer import sendFromPepper
 import interactiveControls as ic
 from interactiveControls import showWhichPage, resetEyesAndTablet, set_leds
 
-from displaygeneration import seekCourseName
+import displayGeneration as dg
+from displayGeneration import seekCourseName
 
 import speech_recognition as sr
 import time
@@ -60,6 +61,7 @@ def shush():
 def queryCourseCodes(query, responsesPipeline, eyes):
     eyes.start_thinking()
     ic.showWhichPage("loading")
+    # queryCourseCodes returns "repeat" = true if the query search is not successful
     repeat = postQueryCourseCodes(query, responsesPipeline)
     eyes.stop_thinking()
     ic.resetEyesAndTablet()
@@ -172,6 +174,8 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
         # Start recording when sound is detected
         if status is not None:
             print("Recording is starting...")
+            dg.generateListeningPage()                          
+            ic.showPage()
             recorder.startMicrophonesRecording(path_name, "wav", 16000, (0,0,1,0))
             set_leds('cyan')
             break
@@ -289,13 +293,27 @@ def postQueryCourseCodes(_question, sentences):
     data = {"question": _question}
     response = requests.post(url, json=data, stream=True)
     course_codes = response.json()['course_codes']
+    print(course_codes)
     
     if len(course_codes):
         course_names = [seekCourseName(str(i)) for i in course_codes]
-        speak('I have found {} courses for you.'.format(len(course_codes)))
-        speak('Here are a few that you might find interesting.')
-        speak(str(', '.join(course_names[:3])))
-        speak('Do you wanna know more about a specific course?')
+#         dg.generateBasicListViewPage([str(i) for i in course_codes[:5]])                    
+        ic.showPage()
+        if len(course_names) == 0:
+            ### redundant? but just in case
+            speak("Sorry, I couldn't find any courses like that.")
+            speak("Did you have a specific course in mind?")
+        elif len(course_names) == 1:
+            # if course_names len = 1, use different grammar
+            speak("I have found one course for you.")
+            speak("It is the " + course_names[0])
+            speak("Would you like to know more about this course?")
+        else:
+            # if course_names len > 1, use plural language
+            speak('I have found {} courses for you.'.format(len(course_codes)))
+            speak('Here are a few that you might find interesting.')
+            speak(str(', '.join(course_names[:3])))
+            speak('Do you wanna know more about a specific course?')
         return False
     else:
         speak('I am unable to find any relevant courses for you. Can you please repeat your query?')
@@ -306,16 +324,22 @@ def postQuerySpecificCourse(_question, sentences, rcnt):
     url = 'http://10.104.22.24:8891/courseInfo'
     data = {"question": _question}
     response = requests.post(url, json=data, stream=True)
-    course_summary = str(response.json()['course_summary'])
+#     course_codes = response.json()['course_codes'] # retrieve course codes list for display
+    course_summary = str(response.json()['course_summary']) # retrieve course summary data for speech
     
-    if len(course_summary):
-        speak(course_summary)
+    if len(course_codes): # if at least one course code is returned
+#         dg.generateBasicQRPage(course_codes[0]) # show the QR page for the first
+#         ic.showPage()
+                                                  
+    if len(course_summary): # if at least one course summary is returned
+        speak(course_summary) # say the summary for the first (these should be the same course, but need to confirm how the query function works!)
         return False
     else:
         if rcnt < 4:
             speak('Sorry could you please repeat that?')
             return True
         else:
+#             ic.resetEyesAndTablet()
             speak('Sorry I am unable to understand. My processors might be running hot. I need some rest. But thank you for interacting with me.')
             return False
 
