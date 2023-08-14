@@ -225,8 +225,6 @@ def stopListening():
 def reduce_noise(server, audio_path = 'recordings/recording.wav', save_path = 'recordings/rn_recording.wav', amount = 0.4, vol_increase = 5):
     # Read the audio file
     rate, data = wavfile.read(audio_path)
-    print(rate)
-    print(data)
     
     # Send to flask
     reduced_noise = np.array(requests.post(server + '/denoise', json={
