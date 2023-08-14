@@ -1,0 +1,21 @@
+input,label
+"Wow, you're a robot? That's so cool!",C
+"Hi Pepper, nice to meet you. You're very cute.",C
+"Hello Pepper, I'm looking for some information about Deakin courses. Can you help me with that?",DQ
+"Hi there, Pepper! You seem like a fun robot. Do you have any jokes to tell?",FQ
+"Hello and welcome to you too, Pepper. I'm curious about your personality. What do you like to do?",FQ
+"G'day, Pepper. You're a ripper of a robot. How's it going?",FQ
+"Hi Pepper, you're amazing. I love robots. Can I hug you?",RQ
+"Hello Pepper, nice to see you. You look very smart. What can you do?",FQ
+"Hi there, Pepper. I need some help finding the bathroom. Can you show me the way?",RQ
+"Hello Pepper, you're very helpful. I want to know more about Deakin scholarships. Can you tell me about them?",DQ
+"Hi Pepper, how are you? I'm just browsing around. Do you have any recommendations?",RQ
+"Hello Pepper, my name is John and I am a human visitor at your mercy.",C
+"Hello Pepper, thank you for your service. You're doing a great job. Can I give you some feedback?",RQ
+"Hello Pepper, that's a nice name. How did you get it? Can I choose a different name for you?",FQ
+"Hi Pepper, you're so friendly. Do you have any friends? Can I be your friend?",FQ
+"Hi there, Pepper. You're a great companion. Do you have any hobbies? Can I join you?",FQ
+"Hi Pepper, you're awesome. Do you have any feelings? Can I make you happy?",FQ
+Hello and thank you! I'll call you Pepper. You're a robot with a charm!,C
+Hello and greetings! I won't call you Pepper. You're a robot with a flaw!,C
+Hello and wow! I can call you Pepper? You're a robot with a surprise!,C
