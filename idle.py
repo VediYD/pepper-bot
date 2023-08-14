@@ -9,7 +9,7 @@ from naoqi import ALProxy
 # from displayGeneration import *
 
 # ### Custom Interaction, Behaviour and Display Imports ###
-# from interactiveControls import *
+from interactiveControls import *
 
 # ### Custom Hard-Coded Prompt Imports ###
 # from prompts import *
@@ -46,29 +46,33 @@ class idling:
             'animations/Stand/Waiting/Think_3', 'animations/Stand/Waiting/Think_4'
         ]
         self.idle_thread = threading.Thread(target=self.idle_behavior_thread)
+        self.idle_thread.start()
+
 
     def idle_behavior_thread(self):
-        while self.idling:
-            behaviorName = random.choice(self.behaviorList)
+        while True:
+            if self.idling:
+                behaviorName = random.choice(self.behaviorList)
 
-            # Checks if behavior is installed and not running
-            if self.behavior.isBehaviorInstalled(behaviorName):
-                # Runs behavior
-                self.behavior.runBehavior(behaviorName)
-                self.leds.fadeRGB('FaceLeds', 'white', 1)
-                time.sleep(15)
+                # Checks if behavior is installed and not running
+                if self.behavior.isBehaviorInstalled(behaviorName):
+                    # Runs behavior
+                    self.behavior.runBehavior(behaviorName)
+                    self.leds.fadeRGB('FaceLeds', 'white', 1)
+                    time.sleep(15)
 
+                else:
+                    print("Behavior not found: " + behaviorName)
             else:
-                print("Behavior not found: " + behaviorName)
+                time.sleep(1)
 
         return
 
     def start_idle_behavior(self):
         self.idling = True
-        self.idle_thread.start()
 
     def stop(self):
         self.idling = False
         self.behavior.stopAllBehaviors()
+        return_to_default_pos()
         self.leds.fadeRGB('FaceLeds', 'white', 1)
-        self.idle_thread.join(0)

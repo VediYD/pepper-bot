@@ -243,13 +243,13 @@ def reduce_noise(server, audio_path = 'recordings/recording.wav', save_path = 'r
 
     print('Saved noise reduced audio file to ' + save_path)
 
-def convert_wav_to_text(audio_path):
+def convert_wav_to_text(audio_path, engine='google'):
     try:
         # Initialize recognizer class (for recognizing the speech)
         r = sr.Recognizer()
 
         # Convert the audio to speech
-        with sr.AudioFile(path) as source:
+        with sr.AudioFile(audio_path) as source:
             # Listen for the data (load audio to memory)
             audio_data = r.record(source)
             # Recognize the text
@@ -262,15 +262,26 @@ def convert_wav_to_text(audio_path):
         return text
 
     except Exception as e:
+        print(e)
         return '%low_volume_error%'
+    
+def check_lowvol(_ques):
+    if _ques=='%low_volume_error%':
+        print('Low volume error reached')
+        speak("Sorry that was difficult for me to understand. Can you please speak a bit louder.")
+        return True
+    else:
+        return False
 
-
-def 
 
 ################################################################################
 ##### GPT text reciever
 ##########
 def postQueryCourseCodes(_question, sentences):
+    _lowvol = check_lowvol(_question)
+    if _lowvol:
+        # if low volume repeat the last prompt
+        return True
     url = link + '/getCourses'
     data = {"question": _question}
     response = requests.post(url, json=data, stream=True)
@@ -302,6 +313,10 @@ def postQueryCourseCodes(_question, sentences):
     
     
 def postQuerySpecificCourse(_question, sentences, rcnt):
+    _lowvol = check_lowvol(_question)
+    if _lowvol:
+        # if low volume repeat the last prompt
+        return True
     url = link + '/courseInfo'
     data = {"question": _question}
     response = requests.post(url, json=data, stream=True)
