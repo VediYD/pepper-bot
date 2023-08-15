@@ -191,8 +191,6 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
         if timer_cb.is_set():
             break
             
-#         time.sleep(0.2)
-
 
     if timer_cb.is_set():
         recorder.stopMicrophonesRecording()
@@ -220,9 +218,6 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
             recorder.stopMicrophonesRecording()
             sound_detector.unsubscribe("sound_detector")
             break
-        
-#         time.sleep(0.2)
-
 
             
 def stopListening():

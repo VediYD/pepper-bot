@@ -96,12 +96,10 @@ class EyesController(object):
 ##########
 
 def return_to_default_pos(sentences = None):
-    # posture = ALProxy("ALRobotPosture", constants.PEPPER_HOST, constants.PEPPER_PORT)
     resetEyesAndTablet()
     # set_leds()   
     stop_track_head()
-    defaultPosture
-    # posture.goToPosture("Stand", 0.5)
+    defaultPosture()
     # stop_show_on_tablet()
 
 def defaultPosture():
@@ -109,7 +107,7 @@ def defaultPosture():
     posture.goToPosture("Stand", 0.5)
 
 def resetEyesAndTablet():
-    hidePage()
+#     hidePage()
     set_leds()
 
 
@@ -120,7 +118,6 @@ def resetEyesAndTablet():
 
 def showWhichPage(page):
     """Show specific special case pages"""
-    hidePage()
     if page == "prompt":
         dg.generateDefaultPage()
     elif page == "loading":
