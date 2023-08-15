@@ -48,7 +48,8 @@ def detect():
 
     
 def listen():
-    record_audio_sd(timer=15, debug=False)
+    ic.showWhichPage("listening")
+    record_audio_sd(timer=8, debug=False)
     sendFromPepper()
     reduce_noise(link)
     text = convert_wav_to_text('recordings/recording.wav')
@@ -171,7 +172,6 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
 
     # Start recording
     while True:
-        time.sleep(0.5)
         status = memory.getData("SoundDetected")
 
         # Print status
@@ -190,6 +190,9 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
         # Stop recording when timer is reached
         if timer_cb.is_set():
             break
+            
+#         time.sleep(0.2)
+
 
     if timer_cb.is_set():
         recorder.stopMicrophonesRecording()
@@ -198,7 +201,6 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
     
     sound_detector.setParameter("Sensitivity", 0.5)
     while True:
-        time.sleep(0.5)
         status = memory.getData("SoundDetected")
 
         if debug:
@@ -218,6 +220,9 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
             recorder.stopMicrophonesRecording()
             sound_detector.unsubscribe("sound_detector")
             break
+        
+#         time.sleep(0.2)
+
 
             
 def stopListening():
