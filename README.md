@@ -23,6 +23,11 @@ Once you have cloned the repository and have docker running on your system run t
 ```powershell
 docker run -p 8888:8888 -v "${PWD}:/app" vediyd/pepper-bot
 ```
+
+Or on command prompt
+```cmd
+docker run -p 8888:8888 -v "%cd%:/app" vediyd/pepper-bot
+```
 This command has been tested on both powershell and Ubuntu18.04.
 
 The output looks like this,
