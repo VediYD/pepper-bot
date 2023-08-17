@@ -294,6 +294,7 @@ def classifyQuery(query, threshold=0.8):
     abv_thresh = response.json()['abv_thresh']
     return label, abv_thresh
 
+
 def postQueryCourseCodes(_question, sentences):
     _lowvol = check_lowvol(_question)
     if _lowvol:
@@ -354,6 +355,34 @@ def postQuerySpecificCourse(_question, sentences, rcnt):
 #             ic.resetEyesAndTablet()
             speak('Sorry I am unable to understand. My processors might be running hot. I need some rest. But thank you for interacting with me.')
             return False
+    
+def postCasualQuery(_question):    
+    # define the link to the casual query to gpt
+    url = link + '/casualQuery'
+    
+    # construct the data structure to send post request
+    data = {'question': _question}
+    
+    # set stream=True to allow streaming response back - done at gpt's side
+    response = request.post(url, json=data, stream=True)
+    
+    # Sentences Thread
+    ## starts a thread to say sentences as they are streamed from gpt server
+    say_thread = threading.Thread(target=say_sentences_thread, args=(sentences,))
+    say_thread.start()
+    
+    sentences = []
+    for line in response.iter_content(chunk_size=None):
+        # decode the response
+        x = str(line.decode('utf-8'))
+        
+        # TODO: ADD LOGGING
+        
+        # add data to speaking queue
+        sentences.append(x)
+    
+    # once everything is done, end thread
+    say_thread.join()
 
 
 def postQueryToGPTStreamer(_question, sentences):
@@ -373,20 +402,38 @@ def postQueryToGPTStreamer(_question, sentences):
     
 def say_sentences_thread(sentences):
     counter = 0
+    
+    # initially nothing is spoken
     spoken = False
+    
+    # forever
     while True:
+        
+        # if nothing to say
         if len(sentences) != 0:
+            
+            # thread exit condition
             if sentences[0] == "quit":
                 break  
+            
+            # say the sentence
             speak(sentences[0])
+            
+            # remove it from the sentence list
             sentences.pop(0)
+            
+            # record the time at which last sentence was said
             counter = time.time()
+            
+            # something has been said now
             spoken = True
         else:
             # wait only for 10 seconds after last spoken
             if ((time.time() - counter) > 10) & spoken:
+                
+                # after 10 seconds no point in waiting longer
                 break
             else:
-                time.sleep(1)
+                # if no sentences to say, nothing has been said
+                time.sleep(1)  # do nothing
             continue
-    print('Stopped')
