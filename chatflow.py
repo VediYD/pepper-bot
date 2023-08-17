@@ -1,5 +1,5 @@
 from interactiveControls import showWhichPage
-from humanInteractions import speak, listen, queryCourseCode, querySpecificCourse
+from humanInteraction import speak, listen, queryCourseCodes, querySpecificCourse
 import time
 
 
@@ -58,7 +58,7 @@ def generalOutput(query):
     postCasualQuery(query)
 
 def coursesOutput(query, responsesPipeline, eyes):
-    repeat = queryCourseCode(query, responsesPipeline, eyes)
+    repeat = queryCourseCodes(query, responsesPipeline, eyes)
     if not repeat:
         # Pause for users to read the tablet
         time.sleep(2)
