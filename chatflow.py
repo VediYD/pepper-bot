@@ -1,11 +1,13 @@
 from interactiveControls import showWhichPage
-from humanInteractions import speak, listen
+from humanInteractions import speak, listen, queryCourseCode, querySpecificCourse
 import time
 
 
 ## --> Please ask Haddie to fix your show which page function <--
 # 1. You've not imported it so it won't work
 # 2. This file is in the incorrect directory, so ask her where to put it
+
+global repeat
 
 # Yes and No Synonyms
 yes = [
@@ -55,11 +57,22 @@ def generalOutput(query):
     # Sends to GPT for response
     postCasualQuery(query)
 
-def coursesOutput():
-    
+def coursesOutput(query, responsesPipeline, eyes):
+    repeat = queryCourseCode(query, responsesPipeline, eyes)
+    if not repeat:
+        # Pause for users to read the tablet
+        time.sleep(2)
+
+def specificCourseOutput(query, responsesPipeline, eyes, rcount):
+    repeat = querySpecificCourse(query, responsesPipeline, eyes, rcount)
+    if not repeat:
+        # Pause for users to read the tablet
+        time.sleep(5)
+    return repeat
 
 # Confirm the class and threshold
-def confirm(query, pred_class, threshold, responsesPipeline, eyes):
+def convFlow(query, pred_class, threshold, responsesPipeline, eyes, rcount):
+    repeat = False
     # If classfier identifies class as Campus
     if pred_class=="Campus":
         # If confidence is above threshold
@@ -143,31 +156,13 @@ def confirm(query, pred_class, threshold, responsesPipeline, eyes):
     elif pred_class=="General":
         generalOutput(query)
 
+    elif pred_class=="Courses":
+        coursesOutput(query, responsesPipeline, eyes, rcount)
+
     else:
-        if threshold:
-            coursesOutput(query, responsesPipeline, eyes)
+        repeat = specificCourseOutput(query, responsesPipeline, eyes, rcount)
 
-        else:
-            # Asks the user to confirm if they are referring to the Deakin campuses
-            speak('''
-                Oh, are you referring to the Deakin courses?
-                Just confirming to make sure that I'm providing you with the correct information!
-            ''')
-
-            # Convert the text to speech
-            text = listen()
-
-            # Check if any of the synonyms of yes are in the text
-            found_yes = any(synonym in text.lower() for synonym in yes)
-
-            # If yes, show the campus page and speak about the following
-            if found_yes:
-                coursesOutput()
-
-            else:
-                speak("Sorry, I got confused, could you frame your question differently?")
-
-    return
+    return repeat
     
 
 
@@ -203,93 +198,93 @@ def confirm(query, pred_class, threshold, responsesPipeline, eyes):
 
 
 
-    if pred_class=="Campus":
-        speak("Gotcha! Deakin campuses, right? Just checking so I can give you the right info!")
-        # showWhichPage("Confirm")
+    # if pred_class=="Campus":
+    #     speak("Gotcha! Deakin campuses, right? Just checking so I can give you the right info!")
+    #     # showWhichPage("Confirm")
         
-        txt = listen()
+    #     txt = listen()
             
-        found_yes = any(synonym in txt.lower() for synonym in yes)
+    #     found_yes = any(synonym in txt.lower() for synonym in yes)
 
-        if found_yes:
-            speak("Absolutely! If you're interested in learning more about our campuses, I've got you covered. Just take a look at the QR code displayed on my screen, and it will provide you with all the exciting details about our wonderful campuses. Feel free to scan it whenever you're ready!")
-            showWhichPage("Camp")
-            time.sleep(0.5)
+    #     if found_yes:
+    #         speak("Absolutely! If you're interested in learning more about our campuses, I've got you covered. Just take a look at the QR code displayed on my screen, and it will provide you with all the exciting details about our wonderful campuses. Feel free to scan it whenever you're ready!")
+    #         showWhichPage("Camp")
+    #         time.sleep(0.5)
             
             
-        #found_no = any(synonym in txt.lower() for synonym in no)
-        #elif found_no:
-        #    speak("No worries, Let's start again")
-        #    break
-        #    # Idle behaviors to keep peppers temperature low
-        #    idle.start_idle_behavior()
+    #     #found_no = any(synonym in txt.lower() for synonym in no)
+    #     #elif found_no:
+    #     #    speak("No worries, Let's start again")
+    #     #    break
+    #     #    # Idle behaviors to keep peppers temperature low
+    #     #    idle.start_idle_behavior()
         
-        else:
-            speak("No worries, Let's start again")
-            break
-            # Idle behaviors to keep peppers temperature low
-            idle.start_idle_behavior()
+    #     else:
+    #         speak("No worries, Let's start again")
+    #         break
+    #         # Idle behaviors to keep peppers temperature low
+    #         idle.start_idle_behavior()
             
-    ## TODO: Elif for Courses
+    # ## TODO: Elif for Courses
 
         
-    elif pred_class=="Accomodation":
-        speak("Got it! Looking into accommodation at Deakin, correct? Just double-checking to provide the best details!")
-        #showWhichPage("Confirm")
+    # elif pred_class=="Accomodation":
+    #     speak("Got it! Looking into accommodation at Deakin, correct? Just double-checking to provide the best details!")
+    #     #showWhichPage("Confirm")
         
-        txt = listen()
+    #     txt = listen()
         
-        found_yes = any(synonym in txt.lower() for synonym in yes)
+    #     found_yes = any(synonym in txt.lower() for synonym in yes)
 
-        if found_yes:
-            speak("")
-            showWhichPage("Cacc")
-            time.sleep(0.5)
+    #     if found_yes:
+    #         speak("")
+    #         showWhichPage("Cacc")
+    #         time.sleep(0.5)
             
-        #found_no = any(synonym in txt.lower() for synonym in no)
-        #elif found_no:
-        #    speak("No worries, Let's start again")
-        #    break
-        #    # Idle behaviors to keep peppers temperature low
-        #    idle.start_idle_behavior()
+    #     #found_no = any(synonym in txt.lower() for synonym in no)
+    #     #elif found_no:
+    #     #    speak("No worries, Let's start again")
+    #     #    break
+    #     #    # Idle behaviors to keep peppers temperature low
+    #     #    idle.start_idle_behavior()
         
-        else:
-            speak("No worries, Let's start again")
-            break
-            # Idle behaviors to keep peppers temperature low
-            idle.start_idle_behavior()
+    #     else:
+    #         speak("No worries, Let's start again")
+    #         break
+    #         # Idle behaviors to keep peppers temperature low
+    #         idle.start_idle_behavior()
         
         
-    elif pred_class=="Activities":
-        speak("Exploring clubs and activities at Deakin, perhaps? Just confirming to provide you with the right information!")
-        #showWhichPage("Confirm")
+    # elif pred_class=="Activities":
+    #     speak("Exploring clubs and activities at Deakin, perhaps? Just confirming to provide you with the right information!")
+    #     #showWhichPage("Confirm")
         
-        txt = listen()
+    #     txt = listen()
         
-        found_yes = any(synonym in txt.lower() for synonym in yes)
+    #     found_yes = any(synonym in txt.lower() for synonym in yes)
 
-        if found_yes:
-            speak("Ready to uncover the exciting realm of Deakin's clubs and activities? Swing your attention to the QR code dancing on my screen. It's your all-access pass to the buzz! Give it a scan whenever you're up for some fun exploration!")
-            showWhichPage("Club")
-            time.sleep(0.5)
+    #     if found_yes:
+    #         speak("Ready to uncover the exciting realm of Deakin's clubs and activities? Swing your attention to the QR code dancing on my screen. It's your all-access pass to the buzz! Give it a scan whenever you're up for some fun exploration!")
+    #         showWhichPage("Club")
+    #         time.sleep(0.5)
             
-        #found_no = any(synonym in txt.lower() for synonym in no) 
-        #elif found_no:
-        #    speak("No worries, Let's start again")
-        #    break
-        #    # Idle behaviors to keep peppers temperature low
-        #    idle.start_idle_behavior()
+    #     #found_no = any(synonym in txt.lower() for synonym in no) 
+    #     #elif found_no:
+    #     #    speak("No worries, Let's start again")
+    #     #    break
+    #     #    # Idle behaviors to keep peppers temperature low
+    #     #    idle.start_idle_behavior()
         
-        else:
-            speak("No worries, Let's start again")
-            break
-            # Idle behaviors to keep peppers temperature low
-            idle.start_idle_behavior()
+    #     else:
+    #         speak("No worries, Let's start again")
+    #         break
+    #         # Idle behaviors to keep peppers temperature low
+    #         idle.start_idle_behavior()
     
         
-    elif pred_class=="General":
-        "Yash's General Code"
+    # elif pred_class=="General":
+    #     "Yash's General Code"
         
-    else:
-        speak("Thinking about courses at Deakin, am I right?")
-        "Yash's Course Code"
+    # else:
+    #     speak("Thinking about courses at Deakin, am I right?")
+    #     "Yash's Course Code"
