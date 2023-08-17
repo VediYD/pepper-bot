@@ -1,14 +1,21 @@
-from naoqi import ALProxy
+# installed imports
+from naoqi             import ALProxy
 
-import fileTransfer as ft
-from fileTransfer import sendToPepper
+# created imports
+from fileTransfer      import sendToPepper
+from displayGeneration import generateDefaultPage
+from displayGeneration import generateDashLoader
+from displayGeneration import generateWelcomePage
+from displayGeneration import generateStudyPage
+from displayGeneration import generateUpperCoursePage
+from displayGeneration import generateAccomodationPage
+from displayGeneration import generateClubPage
+from displayGeneration import generateCampusPage
+from constants         import PEPPER_HOST, PEPPER_PORT, PEPPER_PAGE_LANDING
 
-import displayGeneration as dg
-# from displayGeneration import generateDefaultPage, generateDashLoader, generateWelcomePage, generateStudyPage, generateUpperCoursePage, generateAccomodationPage, generateClubPage, generateCampusPage
-from displayGeneration import *
-
-import constants, threading, time 
-from constants import PEPPER_HOST, PEPPER_PORT, PEPPER_PAGE_LANDING
+# built-in imports
+from threading         import Thread
+from time              import sleep
 
 ################################################################################
 ##### Head Tracking Functions
@@ -16,7 +23,7 @@ from constants import PEPPER_HOST, PEPPER_PORT, PEPPER_PAGE_LANDING
 
 def track_head(mode="Head"):
     """find face to target and look towards them until ended"""
-    tracker = ALProxy("ALTracker", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
     tracker.unregisterAllTargets()
     tracker.initialize()
     tracker.registerTarget("Face", 0.05)
@@ -25,10 +32,9 @@ def track_head(mode="Head"):
 
 def stop_track_head():
     """cease track_head()"""
-    tracker = ALProxy("ALTracker", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
     tracker.stopTracker()
     tracker.unregisterAllTargets()
-
 
 
 ################################################################################
@@ -40,7 +46,7 @@ def set_leds(color = 'white', ledSet = 'Face'):
     if color == "cyan":
         rgb = [0.69, 1, 0.84]
 
-    leds = ALProxy("ALLeds", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    leds = ALProxy("ALLeds", PEPPER_HOST, PEPPER_PORT)
     if rgb is not None:   
         leds.fadeRGB(ledSet + "Leds", rgb[0], rgb[1], rgb[2], 1)
     else:
@@ -50,7 +56,7 @@ def set_leds(color = 'white', ledSet = 'Face'):
 class EyesController(object):
     def __init__(self):
         # self.thinking = True
-        self.leds = ALProxy("ALLeds", constants.PEPPER_HOST, constants.PEPPER_PORT)
+        self.leds = ALProxy("ALLeds", PEPPER_HOST, PEPPER_PORT)
         self.colourList = {
             "thinking" : [0.04, 0.44, 0.38],  # green
             "listening": [0, 0.49, 0.60],     # teal
@@ -64,7 +70,7 @@ class EyesController(object):
     def colourEyes(self):
         while self.eyeFade:
             self.leds.fadeRGB("FaceLeds", 'white', 1)
-            time.sleep(1)
+            sleep(1)
             # self.leds.fadeRGB("FaceLeds", 0.6, 1, 0.79, 1)
             self.leds.fadeRGB(
                 "FaceLeds", 
@@ -77,7 +83,7 @@ class EyesController(object):
     def startEyes(self, mode):
         """start eye colour thread: one of thinking, listening, confused, neutral"""
         self.mode = mode
-        self.eyeColourThread = threading.Thread(target=self.colourEyes)
+        self.eyeColourThread = Thread(target=self.colourEyes)
         self.eyeColourThread.start()
 
     def setEyes(self, mode):
@@ -103,7 +109,7 @@ def return_to_default_pos(sentences = None):
     # stop_show_on_tablet()
 
 def defaultPosture():
-    posture = ALProxy("ALRobotPosture", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    posture = ALProxy("ALRobotPosture", PEPPER_HOST, PEPPER_PORT)
     posture.goToPosture("Stand", 0.5)
 
 def resetEyesAndTablet():
@@ -119,55 +125,53 @@ def resetEyesAndTablet():
 def showWhichPage(page):
     """Show specific special case pages"""
     if page == "prompt":
-        dg.generateDefaultPage()
+        generateDefaultPage()
     elif page == "loading":
-        dg.generateDashLoader()
+        generateDashLoader()
     elif page == "listening":
-        dg.generateListeningPage()
+        generateListeningPage()
     elif page == "Cwel":
-        dg.generateWelcomePage()
+        generateWelcomePage()
     elif page == "Cstu":
-        dg.generateStudyPage()
+        generateStudyPage()
     elif page == "Cour":
-        dg.generateUpperCoursePage()
+        generateUpperCoursePage()
     elif page == "Cacc":
-        dg.generateAccomodationPage()
+        generateAccomodationPage()
     elif page == "Club":
-        dg.generateClubPage()
+        generateClubPage()
     elif page == "Camp":
-        dg.generateCampusPage()
+        generateCampusPage()
     else:
-        dg.generateWelcomePage()
+        generateWelcomePage()
     showPage()
 
 def show_on_tablet(path):
     # if path == 'loading_page':
     #     path = './pages/dashLoader.html'
-    ft.sendToPepper(path, constants.PEPPER_PAGE_LANDING)
+    sendToPepper(path, PEPPER_PAGE_LANDING)
     # receive_file(path, '/home/nao/.local/share/PackageManager/apps/robot-page/html/page.html')
-    tabletService = ALProxy("ALTabletService", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    tabletService = ALProxy("ALTabletService", PEPPER_HOST, PEPPER_PORT)
     tabletService.loadUrl('http://198.18.0.1/page.html')
     tabletService.showWebview()
 
 def stop_show_on_tablet():
     """hide the HTML viewer on Pepper"""
-    tabletService = ALProxy("ALTabletService", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    tabletService = ALProxy("ALTabletService", PEPPER_HOST, PEPPER_PORT)
     tabletService.hideWebview()
 
 # Alt versions (can be removed if refactored)
 
 def showPage():
     """use ALTabletService to show html on Pepper"""
-    tabletService = ALProxy("ALTabletService", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    tabletService = ALProxy("ALTabletService", PEPPER_HOST, PEPPER_PORT)
     tabletService.loadUrl('http://198.18.0.1/page.html')
     tabletService.showWebview()
     
 def hidePage():
     """use ALTabletService to hide html from Pepper"""
-    tabletService = ALProxy("ALTabletService", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    tabletService = ALProxy("ALTabletService", PEPPER_HOST, PEPPER_PORT)
     tabletService.hideWebview()
-
-
 
 
 ################################################################################
@@ -175,7 +179,7 @@ def hidePage():
 ##########
 
 def startListeningBL():
-    dg.generateDashLoader()
+    generateDashLoader()
     showPage()
 
 

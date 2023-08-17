@@ -1,64 +1,26 @@
-# ### Custom File Handing Imports ###
-# from fileTransfer import *
+from shutil import copyfile
+from pandas import read_csv
 
-# ### Custom Idle Behaviour Imports ###
-# from idle import *
+from constants    import FILE_NAME_TEMP, TEXT_BY_ID_PATH
+from constants    import PEPPER_QR_LANDING, PEPPER_IMG_LANDING
+from constants    import PEPPER_PAGE_LANDING, PEPPER_HTML_PATH
 
-# ### Custom Page Display Imports ###
-# from displayGeneration import *
-
-# ### Custom Interaction, Behaviour and Display Imports ###
-# from interactiveControls import *
-
-# ### Custom Hard-Coded Prompt Imports ###
-# from prompts import *
-
-# ### Main Interaction Imports ###
-# from humanInteraction import *
-
-import constants, shutil, fileinput
-import pandas as pd
-from constants import FILE_NAME_TEMP, TEXT_BY_ID_PATH, PEPPER_QR_LANDING, PEPPER_IMG_LANDING, PEPPER_PAGE_LANDING, PEPPER_HTML_PATH
-from interactiveControls import showPage
 from fileTransfer import sendFileToPepper
-from bs4 import BeautifulSoup
-import fileTransfer as ft
-import re
+from bs4          import BeautifulSoup
+from re           import compile as recompile
 
 ################################################################################
 ##### File Setup
 ##########
 
-
-### Modules
-#import os
-#import sys
-#import fileinput
-#import shutil
-#import pandas as pd
-#import paramiko
-#from naoqi import ALProxy
-
-### File Mapping
-#PEPPER_HOST = "10.104.23.185"
-#PEPPER_PORT = "9559"
-#constants.FILE_NAME_TEMP = "display.html"
-#PEPPER_HTML_PATH = "/home/nao/.local/share/PackageManager/apps/robot-page/html/"  # page.html"
-#constants.PEPPER_PAGE_LANDING = PEPPER_HTML_PATH + "page.html"
-#constants.PEPPER_QR_LANDING = PEPPER_HTML_PATH + "webfiles/qr.png"  # switched slash direction
-#constants.PEPPER_IMG_LANDING = PEPPER_HTML_PATH + "webfiles/img.png"  # switched slash direction
-#constants.TEXT_BY_ID_PATH = "pages/textbyID.csv"
-
 PATH_PREFIX = ""
 IMG_FILES_FOLDER = "ImgFiles/"
 QR_CODES_FOLDER = "QRCodes/"
-
 
 ###
 def pepperLog(log):
     """Dummy function for error logging"""
     print(log)
-
 
 ### Template list:
 # .__________
@@ -83,7 +45,7 @@ def duplicateTemplate(type):
     template = "pageTemplates/" + type  # "basicQRPage.html"
     # fileName = "display.html"
     try:
-        shutil.copyfile(template, constants.FILE_NAME_TEMP)
+        copyfile(template, FILE_NAME_TEMP)
         pepperLog("copyfile successful")
     except:
         pepperLog("copyfile exception occurred")
@@ -96,7 +58,7 @@ def duplicateTemplate(type):
 def seekCourseName(ID):
     """find CourseName by ID in library"""
     try:
-        data = pd.read_csv(constants.TEXT_BY_ID_PATH)
+        data = read_csv(TEXT_BY_ID_PATH)
         text = data.loc[data["ID"] == ID]
         courseName = text.iloc[0]["CourseName"]
     except: 
@@ -107,7 +69,7 @@ def seekCourseName(ID):
 def seekLocationText(ID):
     """find LocationText by ID in library"""
     try:
-        data = pd.read_csv(constants.TEXT_BY_ID_PATH)
+        data = read_csv(TEXT_BY_ID_PATH)
         text = data.loc[data["ID"] == ID]
         locationText = text.iloc[0]["locationText"]
     except: 
@@ -128,7 +90,7 @@ def seekBodyText(ID):
 def seekCourseAndLocationText(ID):
     """find both CourseName and LocationText by ID in library"""
     try:
-        data = pd.read_csv(constants.TEXT_BY_ID_PATH)
+        data = read_csv(TEXT_BY_ID_PATH)
         text = data.loc[data["ID"] == ID]
         courseName = text.iloc[0]["CourseName"]
         locationText = text.iloc[0]["locationText"]
@@ -151,30 +113,9 @@ def seekCourseNameList(courseIDList):
 ##### Step 3: Update text elements in new html file
 ##########
 
-
-# def textSub(tempText, subText):
-#     """find text in file and replace with other text"""
-#     textToCut = tempText  # "replaceCourseText"
-#     textToPaste = subText  # "the replacement text"
-#     # fileName = "display.html"
-
-#     tempFile = open(constants.FILE_NAME_TEMP, "r")
-#     tempWrite = open(constants.FILE_NAME_TEMP, "w")
-#     matchSuccess = False
-#     for line in fileinput.input(constants.FILE_NAME_TEMP):
-#         if textToCut in line:
-#             matchSuccess = True
-#             tempWrite.write(line.replace(textToCut, textToPaste))
-#     tempFile.close()
-
-#     if matchSuccess:
-#         pepperLog("text match found")
-#     else:
-#         pepperLog("text match exception occurred")
-
 def textSub(tempText, subText):
-    soup = BeautifulSoup(open(constants.FILE_NAME_TEMP), "html.parser")
-    target = soup.find(text=re.compile(tempText))
+    soup = BeautifulSoup(open(FILE_NAME_TEMP), "html.parser")
+    target = soup.find(text=recompile(tempText))
 
     matchSuccess = False
     if target:
@@ -182,7 +123,7 @@ def textSub(tempText, subText):
         target.replace_with(BeautifulSoup(subText))
         
         # Write the changes back to the HTML file
-        with open(constants.FILE_NAME_TEMP, "w") as file:
+        with open(FILE_NAME_TEMP, "w") as file:
             file.write(soup.prettify().encode('utf-8'))
 
 
@@ -212,7 +153,7 @@ def subBodyText(subText):
 # relevant for course templates: "basicQRPage.html", "topBannerQRPage.html"
 def subCourseText(subText):
     """text sub for specific types: course text"""
-    # id_df = pd.read_csv(constants.TEXT_BY_ID_PATH)
+    # id_df = pd.read_csv(TEXT_BY_ID_PATH)
     # tempText = id_df.loc[id_df["ID"] == subText]["CourseName"]
     tempText = "replaceCourseText"
     textSub(tempText, subText)
@@ -256,7 +197,7 @@ def seekQR(ID):
     ### find QR code in library
     pathToQR = PATH_PREFIX + QR_CODES_FOLDER + ID + ".png" #"QRCodes/"
     ### move QR code to file location as "webfiles\qr.png"
-    sendFileToPepper(pathToQR, constants.PEPPER_QR_LANDING)
+    sendFileToPepper(pathToQR, PEPPER_QR_LANDING)
 
 
 def seekImg(ID):
@@ -264,36 +205,20 @@ def seekImg(ID):
     ### find img in library
     pathToImg = PATH_PREFIX + IMG_FILES_FOLDER + ID + ".png" #"imgFiles/"
     ### move img to file location as "webfiles\img.png"
-    sendFileToPepper(pathToImg, constants.PEPPER_IMG_LANDING)
+    sendFileToPepper(pathToImg, PEPPER_IMG_LANDING)
 
 
 ##########
 ##### Step 5: Send updated HTML to Pepper
 ##########
 
-#def sendFileToPepper(sourceFile, landingFile):
-#    """take sourceFile and send to landingFile location on Pepper robot"""
-#    ssh = paramiko.SSHClient()
-#    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-#    ssh.connect(ip, username='nao', password='nao')
-
-#    sftp = ssh.open_sftp()
-#    sftp.put(sourceFile, landingFile)
-
-#    sftp.close()
-#    ssh.close()
-
 def sendPage():
-    """take display.html and push to live"""
-    # to send a file to Pepper, call receive_file(local_path="recordings/recording.wav", remote_path="/home/nao/microphones/recording.wav")
-    ft.sendFileToPepper(constants.FILE_NAME_TEMP, constants.PEPPER_PAGE_LANDING)
-    # showPage()
-
-#def showPage():
-#    """use ALTabletService to show html on Pepper"""
-#    tabletService = ALProxy("ALTabletService", PEPPER_HOST, PEPPER_PORT)
-#    tabletService.loadUrl('http://198.18.0.1/page.html')
-#    tabletService.showWebview()
+    """take display.html and push to live
+    to send a file to Pepper, call
+    receive_file(local_path="recordings/recording.wav"
+    remote_path="/home/nao/microphones/recording.wav")
+    """
+    sendFileToPepper(FILE_NAME_TEMP, PEPPER_PAGE_LANDING)
 
 
 ################################################################################

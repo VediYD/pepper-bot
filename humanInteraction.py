@@ -1,40 +1,22 @@
 # from urllib import response
 from naoqi import ALProxy
 
-# ### Custom File Handing Imports ###
-# from fileTransfer import *
-
-# ### Custom Idle Behaviour Imports ###
-# from idle import *
-
-# ### Custom Page Display Imports ###
-# from displayGeneration import *
-
-# ### Custom Interaction, Behaviour and Display Imports ###
-# from interactiveControls import *
-
-# ### Custom Hard-Coded Prompt Imports ###
-# from prompts import *
-
-# ### Main Interaction Imports ###
-# from humanInteraction import *
-
-import prompts
-import constants, requests, time, random, threading, os
-
-import fileTransfer as ft
-from fileTransfer import sendFromPepper
-
-import interactiveControls as ic
+from prompts             import basicGreetings, basicTopicPrompts
+from constants           import PEPPER_HOST, PEPPER_PORT
+from requests            import post
+from time                import time, sleep
+from random              import choice
+from threading           import Timer, Event, Thread
+from os.path             import join as path_join
+from fileTransfer        import sendFromPepper
 from interactiveControls import showWhichPage, resetEyesAndTablet, set_leds
-
-import displayGeneration as dg
-from displayGeneration import seekCourseName
+from displayGeneration   import seekCourseName, generateListeningPage
+from displayGeneration   import generateBasicListViewPage, generateBasicQRPage
 
 from scipy.io import wavfile
 import speech_recognition as sr
-import time
 import numpy as np
+
 ################################################################################
 ##### Function Handles
 ##########
@@ -48,7 +30,7 @@ def detect():
 
     
 def listen():
-    ic.showWhichPage("listening")
+    showWhichPage("listening")
     record_audio_sd(timer=8, debug=False)
     sendFromPepper()
     reduce_noise(link)
@@ -59,18 +41,18 @@ def listen():
 
 
 def speak(text):
-    tts = ALProxy("ALTextToSpeech", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
     tts.say(text)
 
     
 def shush():
-    tts = ALProxy("ALTextToSpeech", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
     tts.stopAll()
     
 
 def queryCourseCodes(query, responsesPipeline, eyes):
     eyes.setEyes("thinking")
-    ic.showWhichPage("loading")
+    showWhichPage("loading")
     # queryCourseCodes returns "repeat" = true if the query search is not successful
     repeat = postQueryCourseCodes(query, responsesPipeline)
     eyes.setEyes("neutral")
@@ -90,7 +72,7 @@ def querySpecificCourse(query, responsesPipeline, eyes, rcnt):
 ##########
 
 def faceTracker():
-    tracker = ALProxy("ALTracker", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
     tracker.registerTarget("Face", 0.1)
     tracker.setMode("Head")
     tracker.track("Face")
@@ -99,16 +81,16 @@ def faceTracker():
 
 def seePersonAndGreet():
     # Imports
-    memory = ALProxy("ALMemory", constants.PEPPER_HOST, constants.PEPPER_PORT)
-    tracker = ALProxy("ALTracker", constants.PEPPER_HOST, constants.PEPPER_PORT)
-    face_detection = ALProxy("ALFaceDetection", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
+    tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
+    face_detection = ALProxy("ALFaceDetection", PEPPER_HOST, PEPPER_PORT)
 
     face_detection.subscribe("FaceDetection")
     tracker.registerTarget("Face", 0.1)
     tracker.setMode("Head")
     tracker.track("Face")
     tracker.setMaximumDistanceDetection(0.1)
-    ic.showWhichPage('prompt')
+    showWhichPage('prompt')
     is_detected = False
     greeting = ""
     while not is_detected:
@@ -117,20 +99,20 @@ def seePersonAndGreet():
             face_info = faces[0]
             face_id = face_info[0]
             pos = tracker.getTargetPosition(0)
-            now = time.time()
+            now = time()
             print(pos[0])
             while face_id >= 0 or pos[0] <= 0.85:
-                if time.time() - now > 3:
+                if time() - now > 3:
                     is_detected = True
                     # Say a random greeting from the list
-                    greeting = getGreeting() #= random.choice(greetings)
+                    greeting = getGreeting() #= choice(greetings)
                     break
         speak(greeting)
 
 
 def getGreeting():
     """Get greeting from other file as basicGreeting ("Hello, I'm Pepper") + basicTopicPrompts ("Ask me about...")"""
-    greeting = random.choice(prompts.basicGreetings) + random.choice(prompts.basicTopicPrompts)
+    greeting = choice(basicGreetings) + choice(basicTopicPrompts)
     return greeting
 
 
@@ -154,22 +136,22 @@ def timer_callback(timer_cb):
 
 def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav", debug=False):
     """complete audio subscription, detection, recording start and stop"""
-    path_name = os.path.join(path_name)
+    path_name = path_join(path_name)
 
     # Create Connection Proxies
-    recorder = ALProxy("ALAudioRecorder", constants.PEPPER_HOST, constants.PEPPER_PORT)
-    sound_detector = ALProxy("ALSoundDetection", constants.PEPPER_HOST, constants.PEPPER_PORT)
-    memory = ALProxy("ALMemory", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
+    sound_detector = ALProxy("ALSoundDetection", PEPPER_HOST, PEPPER_PORT)
+    memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
     
     sound_detector.subscribe("sound_detector")
     sound_detector.setParameter("Sensitivity", 0.9)
 
     # Callback function for timer
-    timer_cb = threading.Event()
+    timer_cb = Event()
 
     # Record audio when sound is detected
     if timer is not None:
-        threading.Timer(timer, timer_callback, [timer_cb]).start()
+        Timer(timer, timer_callback, [timer_cb]).start()
 
     # Start recording
     while True:
@@ -182,8 +164,8 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
         # Start recording when sound is detected
         if status is not None:
             print("Recording is starting...")
-            dg.generateListeningPage()                          
-            ic.showPage()
+            generateListeningPage()                          
+            showPage()
             recorder.startMicrophonesRecording(path_name, "wav", 16000, (0,0,1,0))
             set_leds('cyan')
             break
@@ -222,7 +204,7 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
 
             
 def stopListening():
-    recorder = ALProxy("ALAudioRecorder", constants.PEPPER_HOST, constants.PEPPER_PORT)
+    recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
     recorder.stopMicrophonesRecording()
 
 
@@ -236,7 +218,7 @@ def reduce_noise(server, audio_path = 'recordings/recording.wav', save_path = 'r
     rate, data = wavfile.read(audio_path)
     
     # Send to flask
-    reduced_noise = np.array(requests.post(server + '/denoise', json={
+    reduced_noise = np.array(post(server + '/denoise', json={
         'rate': rate, 
         'data': data.tolist(),
         'prop_decrease': amount, 
@@ -290,7 +272,7 @@ def check_lowvol(_ques):
 def classifyQuery(query, threshold=0.8):
     url = link + '/classifyResponse'
     data = {"sentence": query, "threshold": threshold}
-    response = requests.post(url, json=data)
+    response = post(url, json=data)
     label = response.json()['label']
     abv_thresh = response.json()['abv_thresh']
     return label, abv_thresh
@@ -303,13 +285,13 @@ def postQueryCourseCodes(_question, sentences):
         return True
     url = link + '/getCourses'
     data = {"question": _question}
-    response = requests.post(url, json=data, stream=True)
+    response = post(url, json=data, stream=True)
     course_codes = response.json()['course_codes']
     
     if len(course_codes):
         course_names = [seekCourseName(str(i)) for i in course_codes]
-        dg.generateBasicListViewPage([str(i) for i in course_codes[:5]])                    
-        ic.showPage()
+        generateBasicListViewPage([str(i) for i in course_codes[:5]])                    
+        showPage()
         if len(course_names) == 0:
             ### redundant? but just in case
             speak("Sorry, I couldn't find any courses like that.")
@@ -338,14 +320,14 @@ def postQuerySpecificCourse(_question, sentences, rcnt):
         return True
     url = link + '/courseInfo'
     data = {"question": _question}
-    response = requests.post(url, json=data, stream=True)
+    response = post(url, json=data, stream=True)
     course_summary = str(response.json()['course_summary'])
     course_code = str(response.json()['course_code'])
     print(course_summary, course_code)
     
     if len(course_summary):   # if at least one course summary is returned
-        dg.generateBasicQRPage(course_code) # show the QR page for the first
-        ic.showPage()
+        generateBasicQRPage(course_code) # show the QR page for the first
+        showPage()
         speak(course_summary) # say the summary for the first (these should be the same course, but need to confirm how the query function works!)
         return False
     else:
@@ -353,7 +335,7 @@ def postQuerySpecificCourse(_question, sentences, rcnt):
             speak('Sorry could you please repeat that?')
             return True
         else:
-#             ic.resetEyesAndTablet()
+#             resetEyesAndTablet()
             speak('Sorry I am unable to understand. My processors might be running hot. I need some rest. But thank you for interacting with me.')
             return False
     
@@ -369,7 +351,7 @@ def postCasualQuery(_question):
     
     # Sentences Thread
     ## starts a thread to say sentences as they are streamed from gpt server
-    say_thread = threading.Thread(target=say_sentences_thread, args=(sentences,))
+    say_thread = Thread(target=say_sentences_thread, args=(sentences,))
     say_thread.start()
     
     sentences = []
@@ -389,10 +371,10 @@ def postCasualQuery(_question):
 def postQueryToGPTStreamer(_question, sentences):
     url = link + '/getCourses'
     data = {"question": _question}
-    response = requests.post(url, json=data, stream=True)
+    response = post(url, json=data, stream=True)
     
     # Sentences Thread
-    say_thread = threading.Thread(target=say_sentences_thread, args=(sentences,))
+    say_thread = Thread(target=say_sentences_thread, args=(sentences,))
     say_thread.start()
     for line in response.iter_content(chunk_size=None):
         x = str(line.decode('utf-8'))
@@ -424,17 +406,17 @@ def say_sentences_thread(sentences):
             sentences.pop(0)
             
             # record the time at which last sentence was said
-            counter = time.time()
+            counter = time()
             
             # something has been said now
             spoken = True
         else:
             # wait only for 10 seconds after last spoken
-            if ((time.time() - counter) > 10) & spoken:
+            if ((time() - counter) > 10) & spoken:
                 
                 # after 10 seconds no point in waiting longer
                 break
             else:
                 # if no sentences to say, nothing has been said
-                time.sleep(1)  # do nothing
+                sleep(1)  # do nothing
             continue
