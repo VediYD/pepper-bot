@@ -53,6 +53,7 @@ def listen():
     sendFromPepper()
     reduce_noise(link)
     text = convert_wav_to_text('recordings/recording.wav')
+    
     print('Listen complete, This is what I heard: ', text)
     return text
 
