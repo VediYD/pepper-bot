@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=962px, height=602px, initial-scale=1, user-scalable=no">
+        <title>Site Display</title>
+        <style> 
+          .window {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 962px;
+            height: 602px;
+          }
+          .banner {
+            width: 962px;
+            height: 200px;
+            background: #373636;
+            position: absolute;
+            left:0px;
+            top:0px;
+          }
+          .parallelogram {
+            width: 550px;
+            height: 602px;
+            transform: skew(-16deg);
+            background: #e1e1e1;
+            position: absolute;
+            left:-89px;
+            top:0px;
+          }
+          .background-image {
+            position: absolute;
+            top: 200px;
+            left: 360px;
+            width: 602px;
+            height: 402px;
+          }
+          .course-name-text {
+            position: absolute;
+            max-width: 960px;
+            max-height: 200px;
+            padding:32px;
+            top: 0px;
+            left: 0px;
+            color: white;
+            font-family:Arial;
+            font-size:32pt;
+            overflow-y: hidden;
+          }
+          .qr-code-image {
+            position: absolute;
+            top: 240px;
+            left: 40px;
+            width: 320px;
+            height: 320px;            
+            border-radius:25px;
+          }
+          .find-out-text {
+            position: absolute;
+            top: 564px;
+            left: 24px;
+            color: black;
+            font-family:Arial;
+            font-size:20pt;
+          }
+          .arrow {
+            position: absolute;
+            top: 516px;
+            left: 330px;
+            color: #FF9300;
+            font-family:Arial;
+            font-size:46pt;
+            transform: rotate(90deg);
+          }
+           .map {
+            position: absolute;
+            top: 516px;
+            left: 430px;
+            color: #ffd923;
+            font-family:Arial;
+            font-size:46pt;
+          }
+           .flashing-prompt{
+            text-align: center;
+            border-radius: 30px;
+            width: 180px;
+            height: 60px;
+            margin: auto;
+            position: absolute;
+            top: 240px;
+            left: 730px;
+            background-color: #007d98;
+            color: white;
+            font-family:Arial;
+            font-size:20pt;
+              line-height: 60px;
+          }
+          .pulse-ring-prompt {
+            width: 180px;
+            height: 60px;
+          	background: #007d98;
+            border: 4px solid #007d98;
+            border-radius: 34px;
+            position: absolute;
+            top: 238px;
+            left: 728px;
+            animation: pulsate infinite 1.5s;
+            
+          }
+          .pulse-ring-background {
+            width: 188px;
+            height: 68px;
+          	background: white;
+          	color: white;
+            border: 6px solid white;
+            border-radius: 40px;
+            position: absolute;
+            top: 232px;
+            left: 722px;
+            animation: pulsate-wider infinite 1.5s;
+          }
+          .pulse-ring-prompt.delay{animation-delay: 1s;}
+          @-webkit-keyframes pulsate {
+            0% {-webkit-transform: scale(1, 1); opacity: 1;}
+            100% {-webkit-transform: scale(1.3, 1.3); opacity: 0;}
+          }
+          .pulse-ring-background.delay{animation-delay: 1s;}
+          @-webkit-keyframes pulsate-wider {
+            0% {-webkit-transform: scale(1, 1); opacity: 0.1;}
+            60% {-webkit-transform: scale(1.4, 1.4); opacity: 0;}
+            100% {-webkit-transform: scale(1.6, 1.6); opacity: 0;}
+          }
+
+
+        </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="window">
+          <div class="banner"></div>
+          <img class="background-image" src="webfiles/img.png" alt="background"             > </div>
+          <div class="parallelogram"></div>
+          <div class="banner"></div>
+          <div class="course-name-text"><span id="courseTextId"> replaceCourseText </span></div>
+          <img class="qr-code-image" src="webfiles/qr.png" alt="qr-code"> </div>
+          <div class="find-out-text"> Scan here to find out more </div>
+          <div class="arrow"> &#8630; </div> <!-- &#10149; -->
+          <div class="under-text"><span id="locationTextId"> replaceLocationText </span></div>
+        </div>
+                  <div class="pulse-ring-background"><span></span></div>
+          <div class="pulse-ring-prompt"><span></span></div>
+          <div class="flashing-prompt"><span> Listening... </span></div>
+      </div>
+    </body>
+</html>
