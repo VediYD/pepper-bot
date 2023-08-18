@@ -11,6 +11,7 @@ from displayGeneration import generateUpperCoursePage
 from displayGeneration import generateAccomodationPage
 from displayGeneration import generateClubPage
 from displayGeneration import generateCampusPage
+from displayGeneration import generateListeningPage
 from constants         import PEPPER_HOST, PEPPER_PORT, PEPPER_PAGE_LANDING
 
 # built-in imports

@@ -10,6 +10,7 @@ from threading           import Timer, Event, Thread
 from os.path             import join as path_join
 from fileTransfer        import sendFromPepper
 from interactiveControls import showWhichPage, resetEyesAndTablet, set_leds
+from interactiveControls import showPage
 from displayGeneration   import seekCourseName, generateListeningPage
 from displayGeneration   import generateBasicListViewPage, generateBasicQRPage
 
@@ -24,8 +25,8 @@ import numpy as np
 global link
 link = 'http://10.104.22.24:8891'
 
-def detect():
-    seePersonAndGreet()
+def detect(_idle):
+    seePersonAndGreet(_idle)
     print("Detect complete")
 
     
@@ -41,8 +42,8 @@ def listen():
 
 
 def speak(text):
-    tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
-    tts.say(text)
+    tts = ALProxy("ALAnimatedSpeech", PEPPER_HOST, PEPPER_PORT)
+    tts.say('^mode(contextual) ' + text + ' ^mode(disabled)')
 
     
 def shush():
@@ -79,7 +80,7 @@ def faceTracker():
     tracker.setMaximumDistanceDetection(0.1)
 
 
-def seePersonAndGreet():
+def seePersonAndGreet(_idle):
     # Imports
     memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
     tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
@@ -104,6 +105,7 @@ def seePersonAndGreet():
             while face_id >= 0 or pos[0] <= 0.85:
                 if time() - now > 3:
                     is_detected = True
+                    _idle.stop()
                     # Say a random greeting from the list
                     greeting = getGreeting() #= choice(greetings)
                     break
@@ -339,7 +341,7 @@ def postQuerySpecificCourse(_question, sentences, rcnt):
             speak('Sorry I am unable to understand. My processors might be running hot. I need some rest. But thank you for interacting with me.')
             return False
     
-def postCasualQuery(_question):    
+def postCasualQuery(_question, sentences):    
     # define the link to the casual query to gpt
     url = link + '/casualQuery'
     
@@ -347,14 +349,13 @@ def postCasualQuery(_question):
     data = {'question': _question}
     
     # set stream=True to allow streaming response back - done at gpt's side
-    response = request.post(url, json=data, stream=True)
+    response = post(url, json=data, stream=True)
     
     # Sentences Thread
     ## starts a thread to say sentences as they are streamed from gpt server
     say_thread = Thread(target=say_sentences_thread, args=(sentences,))
     say_thread.start()
     
-    sentences = []
     for line in response.iter_content(chunk_size=None):
         # decode the response
         x = str(line.decode('utf-8'))

@@ -1,5 +1,5 @@
 from interactiveControls import showWhichPage
-from humanInteraction import speak, listen, queryCourseCodes, querySpecificCourse
+from humanInteraction import speak, listen, queryCourseCodes, querySpecificCourse, postCasualQuery
 import time
 
 
@@ -52,10 +52,10 @@ def activitiesOutput():
         Write up by Sam
     ''')
 
-def generalOutput(query):
+def generalOutput(query, _sentences):
     showWhichPage('prompt')
     # Sends to GPT for response
-    postCasualQuery(query)
+    postCasualQuery(query, _sentences)
 
 def coursesOutput(query, responsesPipeline, eyes):
     repeat = queryCourseCodes(query, responsesPipeline, eyes)
@@ -154,10 +154,10 @@ def convFlow(query, pred_class, threshold, responsesPipeline, eyes, rcount):
                 speak("Sorry, I got confused, could you frame your question differently?")
 
     elif pred_class=="General":
-        generalOutput(query)
+        generalOutput(query, responsesPipeline)
 
     elif pred_class=="Courses":
-        coursesOutput(query, responsesPipeline, eyes, rcount)
+        coursesOutput(query, responsesPipeline, eyes)
 
     else:
         repeat = specificCourseOutput(query, responsesPipeline, eyes, rcount)
