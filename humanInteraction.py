@@ -351,22 +351,7 @@ def postCasualQuery(_question, sentences):
     # set stream=True to allow streaming response back - done at gpt's side
     response = post(url, json=data, stream=True)
     
-    # Sentences Thread
-    ## starts a thread to say sentences as they are streamed from gpt server
-    say_thread = Thread(target=say_sentences_thread, args=(sentences,))
-    say_thread.start()
-    
-    for line in response.iter_content(chunk_size=None):
-        # decode the response
-        x = str(line.decode('utf-8'))
-        
-        # TODO: ADD LOGGING
-        
-        # add data to speaking queue
-        sentences.append(x)
-    
-    # once everything is done, end thread
-    say_thread.join()
+    speak(response.json().encode('utf-8'))
 
 
 def postQueryToGPTStreamer(_question, sentences):
@@ -385,6 +370,7 @@ def postQueryToGPTStreamer(_question, sentences):
 
     
 def say_sentences_thread(sentences):
+    print(sentences)
     counter = 0
     
     # initially nothing is spoken
