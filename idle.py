@@ -1,7 +1,7 @@
 from naoqi     import ALProxy
 from random    import choice
 from threading import Thread
-from time      import sleep
+from time      import sleep, time
 from constants import PEPPER_HOST, PEPPER_PORT
 
 
@@ -48,23 +48,27 @@ class idling:
         self.idle_thread.start()
 
     def idle_behavior_thread(self):
+        behavior_interval = 15  # Launch behavior every 15 seconds
+        behavior_last_run = 0
+
         while True:
-            if self.idling:
+            current_time = time()
+
+            if self.idling and current_time - behavior_last_run >= behavior_interval:
                 behaviorName = choice(self.behaviorList)
 
                 # Checks if behavior is installed and not running
                 if self.behavior.isBehaviorInstalled(behaviorName):
+                    
                     # Runs behavior
                     self.behavior.runBehavior(behaviorName)
                     self.leds.fadeRGB('FaceLeds', 'white', 1)
-                    sleep(15)
+                    behavior_last_run = current_time  # Update last behavior run time
 
                 else:
                     print("Behavior not found: " + behaviorName)
-            else:
-                sleep(1)
-
-        return
+            
+            sleep(1)  # Check every second
 
     def start_idle_behavior(self):
         self.idling = True
