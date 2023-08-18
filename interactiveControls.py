@@ -12,6 +12,7 @@ from displayGeneration import generateAccomodationPage
 from displayGeneration import generateClubPage
 from displayGeneration import generateCampusPage
 from displayGeneration import generateListeningPage
+from displayGeneration import generateErrorPage
 from constants         import PEPPER_HOST, PEPPER_PORT, PEPPER_PAGE_LANDING
 
 # built-in imports
@@ -127,6 +128,8 @@ def showWhichPage(page):
     """Show specific special case pages"""
     if page == "prompt":
         generateDefaultPage()
+    elif page == "confused":
+        generateErrorPage()
     elif page == "loading":
         generateDashLoader()
     elif page == "listening":
@@ -179,8 +182,8 @@ def hidePage():
 ##### Whole Body Language
 ##########
 
-def startListeningBL():
-    generateDashLoader()
-    showPage()
+# def startListeningBL():
+#     generateDashLoader()
+#     showPage()
 
 

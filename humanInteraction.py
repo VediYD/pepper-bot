@@ -1,7 +1,7 @@
 # from urllib import response
 from naoqi import ALProxy
 
-from prompts             import basicGreetings, basicTopicPrompts
+from prompts             import basicGreetings, basicTopicPrompts, yesExamples, verificationPrompts, confusionRepeat, tieredConfusionPrompts, topicBlurb
 from constants           import PEPPER_HOST, PEPPER_PORT
 from requests            import post
 from time                import time, sleep
@@ -14,6 +14,7 @@ from interactiveControls import showPage
 from displayGeneration   import seekCourseName, generateListeningPage
 from displayGeneration   import generateBasicListViewPage, generateBasicQRPage
 
+from copy import deepcopy
 from scipy.io import wavfile
 import speech_recognition as sr
 import numpy as np
@@ -30,9 +31,12 @@ def detect(_idle):
     print("Detect complete")
 
     
-def listen():
+def listen(eyes):
     showWhichPage("listening")
+    eyes.setEyes("listening")
     record_audio_sd(timer=8, debug=False)
+    showWhichPage("thinking")
+    eyes.setEyes("loading")
     sendFromPepper()
     reduce_noise(link)
     text = convert_wav_to_text('recordings/recording.wav')
@@ -50,22 +54,117 @@ def shush():
     tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
     tts.stopAll()
     
+def processQuery(query, responsesPipeline, eyes, state):
+    """state = processQuery(query, responsesPipeline, eyes, state)"""
+    showWhichPage("thinking")
+    eyes.setEyes("loading")
 
-def queryCourseCodes(query, responsesPipeline, eyes):
-    eyes.setEyes("thinking")
-    showWhichPage("loading")
-    # queryCourseCodes returns "repeat" = true if the query search is not successful
-    repeat = postQueryCourseCodes(query, responsesPipeline)
+    previousTopic = state["topic"][:3]
+    currentState = deepcopy(state)
+
+    topic, confident = classifyQuery(query, eyes)
+    if query[0]=="%":
+        currentState["confusion"] = currentState["confusion"] + 1
+        showWhichPage("confused")
+        eyes.setEyes("confused")
+        speak(tieredConfusionPrompts[state["confusion"]])
+        currentState["repeat"] = True
+        currentState["topic"] = "%error%"
+
+    else: 
+        if topic[:3] in ["Acco", "Acti", "Camp"] and not confident:
+            # only confirm if topic one of "Acco", "Acti", "Camp"
+            confident = verifyTopic(topic, eyes)
+        if confident or topic[:3] in ["Cour", "Spec", "Gene"]:
+            #do topic
+            if topic[:3] == "Cour" and previousTopic=="Cour": 
+                topic = "Spec"
+            errored = topicSpecificOutput(topic, query, eyes)
+            if errored:
+                currentState["repeat"] = True
+                currentState["confusion"] = currentState["confusion"] + 1
+
+        else:
+            # express confusion
+            currentState["confusion"] = currentState["confusion"] + 1
+            showWhichPage("confused")
+            eyes.setEyes("confused")
+            speak(confusionRepeat[1])
+            currentState["repeat"] = True
+        currentState["topic"] = topic
+    
+    # if previousTopic=="Cour":
+    #     # then process as deeper course query
+    #     pass
+    # else: 
+        # topic, confident = classifyQuery(query, eyes)
+        # if not confident:
+        #     # only confirm if topic one of "Cour", "Acco", "Acti", "Camp"
+        #     confident = verifyTopic(topic, eyes)
+        # if confident:
+        #     #do topic
+        #     topicSpecificOutput(topic, eyes)
+        # else:
+        #     currentState["confusion"] = currentState["confusion"] + 1
+        #     showWhichPage("confused")
+        #     eyes.setEyes("confused")
+        #     speak(confusionRepeat[1])
+        #     currentState["repeat"] = True
+
+    return currentState
+
+
+#### micro-functions ####
+
+def verifyTopic(topic, eyes):
+    speak(verificationPrompts[topic])
+    text = listen(eyes)
+    return isYes(text)
+
+def isYes(text):
+    return any(synonym in text.lower() for synonym in yesExamples)
+
+def topicSpecificOutput(topic, query, responsesPipeline, eyes):
+    if topic[:3] == "Gene":
+        postCasualQuery(query, responsesPipeline)
+
+    elif topic[:3] == "Cour":
+        repeat = coursesOutput(query, responsesPipeline, eyes)
+        return repeat
+
+    elif topic[:3] == "Spec":
+        repeat = specificCourseOutput(query, responsesPipeline, eyes)
+        return repeat
+
+    elif topic[:3] == "Acti":
+        topicHardOutput("Club", eyes)
+
+    elif topic[:3] == "Cacc":
+        topicHardOutput("Cacc", eyes)
+
+    elif topic[:3] == "Camp":
+        topicHardOutput("Camp", eyes)
+    return False
+
+def topicHardOutput(topic, eyes):
     eyes.setEyes("neutral")
+    showWhichPage(topic)
+    speak(topicBlurb[topic])
+
+def coursesOutput(query, responsesPipeline, eyes):
+    repeat = queryCourseCodes(query, responsesPipeline, eyes)
+    if not repeat:
+        # Pause for users to read the tablet
+        time.sleep(2)
     return repeat
 
-
-def querySpecificCourse(query, responsesPipeline, eyes, rcnt):
-    eyes.setEyes("thinking")
-    # queryCourseCodes returns "repeat" = true if the query search is not successful
-    repeat = postQuerySpecificCourse(query, responsesPipeline, rcnt)
-    eyes.setEyes("neutral")
+def specificCourseOutput(query, responsesPipeline, eyes):
+    repeat = querySpecificCourse(query, responsesPipeline, eyes)
+    if not repeat:
+        # Pause for users to read the tablet
+        time.sleep(5)
     return repeat
+
 
 
 ################################################################################
@@ -258,13 +357,14 @@ def convert_wav_to_text(audio_path, engine='google'):
         print(e)
         return '%low_volume_error%'
     
-def check_lowvol(_ques):
-    if _ques=='%low_volume_error%':
-        print('Low volume error reached')
-        speak("Sorry that was difficult for me to understand. Can you please speak a bit louder.")
-        return True
-    else:
-        return False
+# no
+# def check_lowvol(_ques):
+#     if _ques=='%low_volume_error%':
+#         print('Low volume error reached')
+#         speak("Sorry that was difficult for me to understand. Can you please speak a bit louder.")
+#         return True
+#     else:
+#         return False
 
 
 ################################################################################
@@ -272,19 +372,36 @@ def check_lowvol(_ques):
 ##########
 
 def classifyQuery(query, threshold=0.8):
-    url = link + '/classifyResponse'
-    data = {"sentence": query, "threshold": threshold}
-    response = post(url, json=data)
-    label = response.json()['label']
-    abv_thresh = response.json()['abv_thresh']
-    return label, abv_thresh
+    if query == "%low_volume_error%":
+        return query # use query as error
+    else:     
+        # prepare post data
+        url = link + '/classifyResponse'
+        data = {"sentence": query, "threshold": threshold}
+
+        # send data to ???
+        response = post(url, json=data)
+
+        # set data
+        thresh = response.json()['abv_thresh'] # errored 
+        label = response.json()['label'] # predicted class
+
+        # # If query audible, then
+        # if queryIsAudible:
+        #     label = response.json()['label'] # predicted class
+        # else:
+        #     label = "%low_confidence_error%" # error message instead
+        # # retrieve outputs from response (pred_class, thresh)
+        # label = response.json()['label'] # predicted class
+        # queryIsAudible = response.json()['abv_thresh'] # errored 
+    return label, thresh #, abv_thresh
 
 
-def postQueryCourseCodes(_question, sentences):
-    _lowvol = check_lowvol(_question)
-    if _lowvol:
-        # if low volume repeat the last prompt
-        return True
+def postQueryCourseCodes(_question, sentences, eyes):
+    # _lowvol = check_lowvol(_question)
+    # if _lowvol:
+    #     # if low volume repeat the last prompt
+    #     return True
     url = link + '/getCourses'
     data = {"question": _question}
     response = post(url, json=data, stream=True)
@@ -294,6 +411,7 @@ def postQueryCourseCodes(_question, sentences):
         course_names = [seekCourseName(str(i)) for i in course_codes]
         generateBasicListViewPage([str(i) for i in course_codes[:5]])                    
         showPage()
+        eyes.setEyes("neutral")
         if len(course_names) == 0:
             ### redundant? but just in case
             speak("Sorry, I couldn't find any courses like that.")
@@ -311,15 +429,18 @@ def postQueryCourseCodes(_question, sentences):
             speak('Do you wanna know more about a specific course?')
         return False
     else:
-        speak('I am unable to find any relevant courses for you. Can you please repeat your query?')
+        showWhichPage("confused")
+        eyes.setEyes("confused")
+        speak('I am unable to find any relevant courses for you.') # Can you please repeat your query?')
         return True
     
     
-def postQuerySpecificCourse(_question, sentences, rcnt):
-    _lowvol = check_lowvol(_question)
-    if _lowvol:
-        # if low volume repeat the last prompt
-        return True
+def postQuerySpecificCourse(_question, sentences, eyes):
+    """postQuerySpecificCourse(_question, sentences, eyes)"""
+    # _lowvol = check_lowvol(_question)
+    # if _lowvol:
+    #     # if low volume repeat the last prompt
+    #     return True
     url = link + '/courseInfo'
     data = {"question": _question}
     response = post(url, json=data, stream=True)
@@ -328,20 +449,22 @@ def postQuerySpecificCourse(_question, sentences, rcnt):
     print(course_summary, course_code)
     
     if len(course_summary):   # if at least one course summary is returned
+        eyes.setEyes("neutral")
         generateBasicQRPage(course_code) # show the QR page for the first
         showPage()
         speak(course_summary) # say the summary for the first (these should be the same course, but need to confirm how the query function works!)
         return False
     else:
-        if rcnt < 4:
-            speak('Sorry could you please repeat that?')
-            return True
-        else:
-#             resetEyesAndTablet()
-            speak('Sorry I am unable to understand. My processors might be running hot. I need some rest. But thank you for interacting with me.')
-            return False
+        True
+#         if rcnt < 4:
+#             speak('Sorry could you please repeat that?')
+#             return True
+#         else:
+# #             resetEyesAndTablet()
+#             speak('Sorry I am unable to understand. My processors might be running hot. I need some rest. But thank you for interacting with me.')
+#             return False
     
-def postCasualQuery(_question, sentences):    
+def postCasualQuery(_question, sentences, eyes):    
     # define the link to the casual query to gpt
     url = link + '/casualQuery'
     
@@ -350,7 +473,9 @@ def postCasualQuery(_question, sentences):
     
     # set stream=True to allow streaming response back - done at gpt's side
     response = post(url, json=data, stream=True)
-    
+
+    showWhichPage("Cwel")
+    eyes.setEyes("neutral")
     speak(response.json().encode('utf-8'))
 
 
@@ -407,3 +532,21 @@ def say_sentences_thread(sentences):
                 # if no sentences to say, nothing has been said
                 sleep(1)  # do nothing
             continue
+
+
+
+def queryCourseCodes(query, responsesPipeline, eyes):
+    eyes.setEyes("thinking")
+    showWhichPage("loading")
+    # queryCourseCodes returns "repeat" = true if the query search is not successful
+    repeat = postQueryCourseCodes(query, responsesPipeline, eyes)
+    eyes.setEyes("neutral")
+    return repeat
+
+
+def querySpecificCourse(query, responsesPipeline, eyes):
+    eyes.setEyes("thinking")
+    # queryCourseCodes returns "repeat" = true if the query search is not successful
+    repeat = postQuerySpecificCourse(query, responsesPipeline, eyes)
+    eyes.setEyes("neutral")
+    return repeat

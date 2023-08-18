@@ -46,10 +46,21 @@ confusionInterlude = [
     "Uh... sorry. I think I got confused. What were we talking about?"
 ]
 
+confusionInterlude = [
+    "Uh... sorry. I think I got confused. What were we talking about?"
+]
+
 combinedTopicPrompts = [
     "Deakin offers a wide range of courses across different disciplines and levels. What are you interested in studying?",
     "Deakin is a leading university in research and innovation, with many opportunities for students to get involved. Are you curious about our research areas and projects?",
     "Deakin has a vibrant and diverse student community, with many clubs, societies and events to enjoy. Would you like to hear about activities?",
     "Deakin has four campuses across Victoria, each with its own unique features and facilities. Which campus are you planning to visit or study at?",
     "Deakin has a flexible and supportive learning environment, with many options for online and blended delivery. How do you prefer to learn and study?"
+]
+
+tieredConfusionPrompts = [
+    "I didn't quite catch that. Could you please repeat it?", 
+    "Uh... sorry. Please try again.", 
+    "I'm so sorry. I'm having trouble hearing you. Could you try moving closer and speaking louder, into my microphones?", 
+    "I still could not hear you. I'm so sorry, I might be runnning too hot. Please excuse me while I take a moment to reset. Thank-you for interacting with me!"
 ]
