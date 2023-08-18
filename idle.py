@@ -70,6 +70,6 @@ class idling:
         self.idling = True
 
     def stop(self):
-        self.idling = False
         self.behavior.stopAllBehaviors()
+        self.idling = False
         self.leds.fadeRGB('FaceLeds', 'white', 1)
