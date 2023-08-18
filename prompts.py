@@ -46,8 +46,9 @@ confusionInterlude = [
     "Uh... sorry. I think I got confused. What were we talking about?"
 ]
 
-confusionInterlude = [
-    "Uh... sorry. I think I got confused. What were we talking about?"
+confusionRepeat = [
+    "Sorry, I got confused. Could you frame your question differently?", 
+    "Sorry, I got confused. Can we start again?"
 ]
 
 combinedTopicPrompts = [
@@ -63,4 +64,40 @@ tieredConfusionPrompts = [
     "Uh... sorry. Please try again.", 
     "I'm so sorry. I'm having trouble hearing you. Could you try moving closer and speaking louder, into my microphones?", 
     "I still could not hear you. I'm so sorry, I might be runnning too hot. Please excuse me while I take a moment to reset. Thank-you for interacting with me!"
+]
+
+verificationPrompts = {
+    "Cour":"Just to check, was your question about Courses?",
+    "Acco":"Just confirming, did you ask about accommodation?",
+    "Acti":"Oh, are you referring to the Deakin clubs and activities? Just confirming to make sure that I'm providing you with the correct information!",
+    "Gene":"",
+    "Camp":"Could you please confirm if your question was about the Deakin Campuses?"                 
+}
+
+topicBlurb = {
+    "Cour":"Just to check, was your question about Courses?",
+    "Cacc":"Exploring accommodations? Great choice! Simply glance at the QR code on my screen for all the essential info. Whenever you're ready, go ahead and give it a scan!",
+    "Club":"At Deakin, there are lots of fun activities to get involved in - too many for me to list! This Q-R code will take you right to the details.",
+    "Gene":"",
+    "Camp":"Sure thing! Scan the QR code on my screen for a sneak peek into our campuses. Enjoy all the exciting details at your convenience!"                 
+}
+
+noExamples = [
+    "negative", "nope", "not at all", 
+    "certainly not", "absolutely not", "not really", 
+    "by no means", "deny", "decline", 
+    "refuse", "reject", "disagree", 
+    "nix", "no way", "never", 
+    "nada", "i don't think so", "nah", 
+    "i disagree", "i'm afraid not"
+]
+
+yesExamples = [
+        "affirmative", "absolutely", "indeed", 
+        "certainly", "absolutely right", "correct", 
+        "that's true", "you bet", "precisely", 
+        "of course", "without a doubt", "sure thing", 
+        "definitely", "by all means", "yup",
+        "that's correct", "agreed", "positively", 
+        "true", "absolutely", "yes"
 ]
