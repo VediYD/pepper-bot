@@ -542,8 +542,8 @@ def say_sentences_thread(sentences):
 
 
 def queryCourseCodes(query, responsesPipeline, eyes):
-    eyes.setEyes("thinking")
-    showWhichPage("loading")
+    eyes.setEyes("loading")
+    # showWhichPage("loading")
     # queryCourseCodes returns "repeat" = true if the query search is not successful
     repeat = postQueryCourseCodes(query, responsesPipeline, eyes)
     eyes.setEyes("neutral")
@@ -551,7 +551,7 @@ def queryCourseCodes(query, responsesPipeline, eyes):
 
 
 def querySpecificCourse(query, responsesPipeline, eyes):
-    eyes.setEyes("thinking")
+    eyes.setEyes("loading")
     # queryCourseCodes returns "repeat" = true if the query search is not successful
     repeat = postQuerySpecificCourse(query, responsesPipeline, eyes)
     eyes.setEyes("neutral")
