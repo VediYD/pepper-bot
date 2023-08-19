@@ -8,7 +8,7 @@ from displayGeneration import generateDashLoader
 from displayGeneration import generateWelcomePage
 from displayGeneration import generateStudyPage
 from displayGeneration import generateUpperCoursePage
-from displayGeneration import generateAccomodationPage
+from displayGeneration import generateAccommodationPage
 from displayGeneration import generateClubPage
 from displayGeneration import generateCampusPage
 from displayGeneration import generateListeningPage
@@ -141,7 +141,7 @@ def showWhichPage(page):
     elif page == "Cour":
         generateUpperCoursePage()
     elif page == "Cacc":
-        generateAccomodationPage()
+        generateAccommodationPage()
     elif page == "Club":
         generateClubPage()
     elif page == "Camp":

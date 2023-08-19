@@ -20,7 +20,8 @@ QR_CODES_FOLDER = "QRCodes/"
 ###
 def pepperLog(log):
     """Dummy function for error logging"""
-    print(log)
+    print("DG: " + log)
+    
 
 ### Template list:
 # .__________
@@ -41,14 +42,15 @@ def pepperLog(log):
 
 
 def duplicateTemplate(type):
+    global_dg_logger = "DG LOG: "
     """duplicate file from template (will overwrite)"""
     template = "pageTemplates/" + type  # "basicQRPage.html"
     # fileName = "display.html"
     try:
         copyfile(template, FILE_NAME_TEMP)
-        pepperLog("copyfile successful")
+        pepperLog(type + " copyfile successful")
     except:
-        pepperLog("copyfile exception occurred")
+        pepperLog(type + " copyfile exception occurred")
 
 
 ##########
@@ -63,6 +65,7 @@ def seekCourseName(ID):
         courseName = text.iloc[0]["CourseName"]
     except: 
         courseName = "not found"
+        pepperLog("courseName not found")
     return courseName
 
 
@@ -74,16 +77,19 @@ def seekLocationText(ID):
         locationText = text.iloc[0]["locationText"]
     except: 
         locationText = "not found"
+        pepperLog("locationText not found")
     return locationText
 
 
 def seekHeadText(ID):
     """find HeadText by ID in library"""
+    pepperLog("seekHeadText not implemented")
     return ID  # headText
 
 
 def seekBodyText(ID):
     """find bodyText by ID in library"""
+    pepperLog("seekBodyText not implemented")
     return ID  # bodyText
 
 
@@ -97,6 +103,7 @@ def seekCourseAndLocationText(ID):
     except:
         courseName = "not found"
         locationText = "not found"
+        pepperLog("courseName and locationText not found")
     return courseName, locationText
 
 def seekCourseNameList(courseIDList):
@@ -128,9 +135,9 @@ def textSub(tempText, subText):
 
 
     if matchSuccess:
-        pepperLog("text match found")
+        pepperLog(tempText[7:] + " text match found")
     else:
-        pepperLog("text match exception occurred")
+        pepperLog(tempText[7:] + " text match exception occurred")
 
 
 ###
@@ -397,7 +404,7 @@ def generateStudyPage():
 ##########
 
 
-def generateAccomodationPage():
+def generateAccommodationPage():
     """using generateBottomBannerWithBodyQRPage.html and ID=Cacc"""
     caccHeadText = "Accommodation"
     caccBodyText = "From our modern on-campus accommodation to a wide range of local, off-campus lodgings; long or short-term, there's a room or house to welcome you."
