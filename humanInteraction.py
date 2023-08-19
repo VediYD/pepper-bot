@@ -60,11 +60,8 @@ def processQuery(query, responsesPipeline, eyes, state):
     previousTopic = state["topic"][:3]
     currentState = deepcopy(state)
 
-    topic, confident = classifyQuery(query)
-    print('QUERY CLASS: ', topic, confident)
-    
-    # we should move classification after error check - YV
-    
+    # If stt unsuccessful, no topic is predicted. 
+    # Pepper declares error (ie "speak up"), then repeat 
     if query[0]=="%":
         currentState["confusion"] = currentState["confusion"] + 1
         showWhichPage("confused")
@@ -73,14 +70,18 @@ def processQuery(query, responsesPipeline, eyes, state):
         currentState["repeat"] = True
         currentState["topic"] = "%error%"
 
+    # If stt is successful, then attempt to classify the query
     else: 
-        if topic[:3] in ["Acco", "Acti", "Camp"] and not confident:
+        topic, confident = classifyQuery(query)
+        print('QUERY CLASS: ', topic, confident)
+
+        if topic[:3] in ["Cacc", "Club", "Camp"] and not confident: # ["Acco", "Acti", "Camp"]
             # only confirm if topic one of "Acco", "Acti", "Camp"
             confident = verifyTopic(topic, eyes)
-        if confident or topic[:3] in ["Cour", "Spec", "Gene"]:
+        if confident or topic[:3] in ["Cour", "Cspe", "Cgen"]: # ["Cour", "Spec", "Gene"]:
             #do topic
             if topic[:3] == "Cour" and previousTopic=="Cour": 
-                topic = "Spec"
+                topic = "Cspe"
             errored = topicSpecificOutput(topic, query, responsesPipeline, eyes)
             if errored:
                 currentState["repeat"] = True
@@ -127,18 +128,18 @@ def isYes(text):
     return any(synonym in text.lower() for synonym in yesExamples)
 
 def topicSpecificOutput(topic, query, responsesPipeline, eyes):
-    if topic[:3] == "Gene":
+    if topic[:3] == "Cgen": # "Gene":
         postCasualQuery(query, responsesPipeline)
 
     elif topic[:3] == "Cour":
         repeat = coursesOutput(query, responsesPipeline, eyes)
         return repeat
 
-    elif topic[:3] == "Spec":
+    elif topic[:3] == "Cspe": # "Spec":
         repeat = specificCourseOutput(query, responsesPipeline, eyes)
         return repeat
 
-    elif topic[:3] == "Acti":
+    elif topic[:3] == "Club": # "Acti":
         topicHardOutput("Club", eyes)
 
     elif topic[:3] == "Cacc":
@@ -396,6 +397,19 @@ def classifyQuery(query, threshold=0.8):
         # # retrieve outputs from response (pred_class, thresh)
         # label = response.json()['label'] # predicted class
         # queryIsAudible = response.json()['abv_thresh'] # errored 
+        
+        # refactor label to topic codes
+        if label[:3] == "Acco":
+            label = "Cacc"
+        elif label[:3] == "Cour":
+            label = "Cour"
+        elif label[:3] == "Acti":
+            label = "Club"
+        elif label[:3] == "Camp":
+            label = "Camp"
+        elif label[:3] == "Gene":
+            label = "Cgen"
+
     return label, thresh #, abv_thresh
 
 
@@ -477,7 +491,7 @@ def postCasualQuery(_question, sentences, eyes):
     response = post(url, json=data, stream=True)
     
     # Sentences Thread
-    showWhichPage("Cwel")
+    showWhichPage("Cgen") # "Cwel"
     eyes.setEyes("neutral")
     say_thread = Thread(target=say_sentences_thread, args=(sentences,))
     say_thread.start()
