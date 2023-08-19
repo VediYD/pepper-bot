@@ -62,7 +62,7 @@ def processQuery(query, responsesPipeline, eyes, state):
     previousTopic = state["topic"][:3]
     currentState = deepcopy(state)
 
-    topic, confident = classifyQuery(query, eyes)
+    topic, confident = classifyQuery(query)
     if query[0]=="%":
         currentState["confusion"] = currentState["confusion"] + 1
         showWhichPage("confused")
@@ -79,7 +79,7 @@ def processQuery(query, responsesPipeline, eyes, state):
             #do topic
             if topic[:3] == "Cour" and previousTopic=="Cour": 
                 topic = "Spec"
-            errored = topicSpecificOutput(topic, query, eyes)
+            errored = topicSpecificOutput(topic, query, responsesPipeline, eyes)
             if errored:
                 currentState["repeat"] = True
                 currentState["confusion"] = currentState["confusion"] + 1
@@ -373,7 +373,7 @@ def convert_wav_to_text(audio_path, engine='google'):
 
 def classifyQuery(query, threshold=0.8):
     if query == "%low_volume_error%":
-        return query # use query as error
+        return query, False # use query as error
     else:     
         # prepare post data
         url = link + '/classifyResponse'

@@ -63,7 +63,8 @@ class EyesController(object):
             "thinking" : [0.04, 0.44, 0.38],  # green
             "listening": [0, 0.49, 0.60],     # teal
             "confused" : [0.78, 0.26, 0.60],  # magenta
-            "neutral"  : [1, 1, 1]            # white
+            "neutral"  : [1, 1, 1],           # white
+            "loading" : [0.95, 0.90, 0.20]    # yellow
         }
         self.eyeFade = True
         self.mode = "neutral"
