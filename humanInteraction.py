@@ -112,7 +112,7 @@ def isYes(text):
 def topicSpecificOutput(topic, query, responsesPipeline, eyes):
     """topicSpecificOutput(topic, query, responsesPipeline, eyes), where topic is one of Cgen, Cour, Cspe, Club, Cacc, Camp"""
     if topic[:4] == "Cgen": # "Gene":
-        postCasualQuery(query, responsesPipeline)
+        postCasualQuery(query, responsesPipeline, eyes)
 
     elif topic[:4] == "Cour":
         repeat = coursesOutput(query, responsesPipeline, eyes)
@@ -141,14 +141,14 @@ def coursesOutput(query, responsesPipeline, eyes):
     repeat = queryCourseCodes(query, responsesPipeline, eyes)
     if not repeat:
         # Pause for users to read the tablet
-        time.sleep(2)
+        sleep(2)
     return repeat
 
 def specificCourseOutput(query, responsesPipeline, eyes):
     repeat = querySpecificCourse(query, responsesPipeline, eyes)
     if not repeat:
         # Pause for users to read the tablet
-        time.sleep(5)
+        sleep(5)
     return repeat
 
 
