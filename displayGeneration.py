@@ -114,13 +114,13 @@ def seekCourseNameList(courseIDList):
 ##########
 
 def textSub(tempText, subText):
-    soup = BeautifulSoup(open(FILE_NAME_TEMP), "html.parser")
+    soup = BeautifulSoup(open(FILE_NAME_TEMP), features="html.parser")
     target = soup.find(text=recompile(tempText))
 
     matchSuccess = False
     if target:
         matchSuccess = True
-        target.replace_with(BeautifulSoup(subText), features="html.parser")
+        target.replace_with(BeautifulSoup(subText, features="html.parser"))
         
         # Write the changes back to the HTML file
         with open(FILE_NAME_TEMP, "w") as file:

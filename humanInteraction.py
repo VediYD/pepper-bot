@@ -35,7 +35,7 @@ def listen(eyes):
     showWhichPage("listening")
     eyes.setEyes("listening")
     record_audio_sd(timer=8, debug=False)
-    showWhichPage("thinking")
+    showWhichPage("loading")
     eyes.setEyes("loading")
     sendFromPepper()
     reduce_noise(link)
@@ -56,7 +56,7 @@ def shush():
     
 def processQuery(query, responsesPipeline, eyes, state):
     """state = processQuery(query, responsesPipeline, eyes, state)"""
-    showWhichPage("thinking")
+    showWhichPage("loading")
     eyes.setEyes("loading")
 
     previousTopic = state["topic"][:3]
