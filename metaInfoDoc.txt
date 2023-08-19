@@ -1,0 +1,24 @@
+
+## String and State Definitions
+# Pepper's Body Language types: 
+- "loading" (was "thinking") [green eyes, tablet]
+- "listening" [blue eyes, tablet]
+- "confused" (was "error") [pink eyes, tablet]
+
+# Pepper's state dict: 
+- "topic" (string, describes flow position) ["fresh", "%error%" (if query[0]=="%"), "Cacc", "Club", "Camp", "Cour", "Cspe", "Cgen", "%low_volume_error%" (if query == "%low_volume_error%" in classifyQuery - should be unreachable? classifyQuery not called if query[0] == "%") 
+- "confusion" (int, limits total error before quit) [0-3]
+- "repeat" (bool, dictates whether the main sub-loop is repeated) [True, False]
+- "confident" (bool, dictates whether confirmation is needed) [True, False]
+
+# Pepper's default image types:
+- "prompt" (with speak bubbles)
+- "confused" (with pink 'sorry' pulse)
+- "loading" (with green 'thinking' bubble and moving dashes)
+- "listenining" (with blue 'listening' pulse)
+- "Cgen" (WelcomePage, with generic image and text)
+- "Cstu" (Lower banner page with some filler content)
+- "Cour" (Lower banner page with some filler content)
+- "Cacc" (Lower banner page with some filler content)
+- "Club" (Lower banner page with some filler content)
+- "Camp" (Lower banner page with some filler content)
