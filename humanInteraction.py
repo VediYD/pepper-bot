@@ -2,6 +2,7 @@
 from naoqi import ALProxy
 
 from prompts             import basicGreetings, basicTopicPrompts, yesExamples, verificationPrompts, confusionRepeat, tieredConfusionPrompts, topicBlurb, goodbyePrompts, nextTopicPrompts
+from prompts             import accommodationKeywordExamples, coursesKeywordExamples, activitiesKeywordExamples
 from constants           import PEPPER_HOST, PEPPER_PORT, GPT_LINK
 from requests            import post
 from time                import time, sleep
@@ -20,11 +21,36 @@ import speech_recognition as sr
 import numpy as np
 
 ################################################################################
-##### Function Handles
+##### Global Variables
 ##########
 
 global link
 link = GPT_LINK # 'http://10.104.22.24:8891'
+
+global atts
+atts = ALProxy("ALAnimatedSpeech", PEPPER_HOST, PEPPER_PORT)
+
+global tts
+tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
+
+global tracker
+tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
+
+global memory
+memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
+
+global face_detection
+face_detection = ALProxy("ALFaceDetection", PEPPER_HOST, PEPPER_PORT)
+
+global recorder
+recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
+    
+global sound_detector
+sound_detector = ALProxy("ALSoundDetection", PEPPER_HOST, PEPPER_PORT)
+
+################################################################################
+##### Function Handles
+##########
 
 def detect(_idle):
     seePersonAndGreet(_idle)
@@ -46,12 +72,12 @@ def listen(eyes):
 
 
 def speak(text):
-    tts = ALProxy("ALAnimatedSpeech", PEPPER_HOST, PEPPER_PORT)
-    tts.say('^mode(contextual) ' + text + ' ^mode(disabled)')
+    # tts = ALProxy("ALAnimatedSpeech", PEPPER_HOST, PEPPER_PORT)
+    atts.say('^mode(contextual) ' + text + ' ^mode(disabled)')
 
     
 def shush():
-    tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
+    # tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
     tts.stopAll()
     
 def processQuery(query, responsesPipeline, eyes, state):
@@ -147,7 +173,7 @@ def sayGoodbye():
 ##########
 
 def faceTracker():
-    tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
+    # tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
     tracker.registerTarget("Face", 0.1)
     tracker.setMode("Head")
     tracker.track("Face")
@@ -156,9 +182,9 @@ def faceTracker():
 
 def seePersonAndGreet(_idle):
     # Imports
-    memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
-    tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
-    face_detection = ALProxy("ALFaceDetection", PEPPER_HOST, PEPPER_PORT)
+    # memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
+    # tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
+    # face_detection = ALProxy("ALFaceDetection", PEPPER_HOST, PEPPER_PORT)
 
     face_detection.subscribe("FaceDetection")
     tracker.registerTarget("Face", 0.1)
@@ -215,9 +241,9 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
     path_name = path_join(path_name)
 
     # Create Connection Proxies
-    recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
-    sound_detector = ALProxy("ALSoundDetection", PEPPER_HOST, PEPPER_PORT)
-    memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
+    # recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
+    # sound_detector = ALProxy("ALSoundDetection", PEPPER_HOST, PEPPER_PORT)
+    # memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
     
     sound_detector.subscribe("sound_detector")
     sound_detector.setParameter("Sensitivity", 0.9)
@@ -280,7 +306,7 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
 
             
 def stopListening():
-    recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
+    # recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
     recorder.stopMicrophonesRecording()
 
 
@@ -352,6 +378,12 @@ def classifyQuery(query, threshold=0.8):
     """classifyQuery(query, threshold=0.8)"""
     if query == "%low_volume_error%":
         return query, False # use query as error
+    elif any(synonym in query.lower() for synonym in accommodationKeywordExamples):
+        return "Cacc", True #, abv_thresh
+    elif any(synonym in query.lower() for synonym in coursesKeywordExamples):
+        return "Cour", True
+    elif any(synonym in query.lower() for synonym in activitiesKeywordExamples):
+        return "Club", True
     else:     
         # prepare post data
         url = link + '/classifyResponse'
