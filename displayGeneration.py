@@ -120,7 +120,7 @@ def textSub(tempText, subText):
     matchSuccess = False
     if target:
         matchSuccess = True
-        target.replace_with(BeautifulSoup(subText))
+        target.replace_with(BeautifulSoup(subText), features="html.parser")
         
         # Write the changes back to the HTML file
         with open(FILE_NAME_TEMP, "w") as file:
