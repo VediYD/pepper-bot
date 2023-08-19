@@ -134,7 +134,7 @@ def showWhichPage(page):
         generateDashLoader()
     elif page == "listening":
         generateListeningPage()
-    elif page == "Cwel":
+    elif page == "Cgen":
         generateWelcomePage()
     elif page == "Cstu":
         generateStudyPage()
