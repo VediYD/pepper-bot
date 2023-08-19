@@ -67,7 +67,11 @@ tieredConfusionPrompts = [
 ]
 
 goodbyePrompts = [
-    "Uh... sorry. I think I got confused. What were we talking about?"
+    # "Uh... sorry. I think I got confused. What were we talking about?"
+    "Thanks for stopping by! It was lovely to talk to you. ", 
+    "I appreciate you coming by to say hello! Have a good rest of your day. ",
+    "I hope was able to help! Thanks for the chat.",
+    "Thanks for the conversation, it was lovely having you here!"
 ]
 
 verificationPrompts = {
@@ -106,4 +110,12 @@ yesExamples = [
         "definitely", "by all means", "yup",
         "that's correct", "agreed", "positively", 
         "true", "absolutely", "yes"
+]
+
+nextTopicPrompts = [
+    "Is there anything else I could help you with today?", 
+    "Is there anything else you'd like to know?", 
+    "Do you have any other questions?",
+    "Is there something else on your mind?", 
+    "Are there additional topics you'd like to explore?"
 ]
