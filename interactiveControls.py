@@ -60,11 +60,10 @@ class EyesController(object):
         # self.thinking = True
         self.leds = ALProxy("ALLeds", PEPPER_HOST, PEPPER_PORT)
         self.colourList = {
-            "thinking" : [0.04, 0.44, 0.38],  # green
             "listening": [0, 0.49, 0.60],     # teal
             "confused" : [0.78, 0.26, 0.60],  # magenta
             "neutral"  : [1, 1, 1],           # white
-            "loading" : [0.95, 0.90, 0.20]    # yellow
+            "loading" : [0.04, 0.44, 0.38]    # green
         }
         self.eyeFade = True
         self.mode = "neutral"

@@ -35,8 +35,6 @@ def listen(eyes):
     showWhichPage("listening")
     eyes.setEyes("listening")
     record_audio_sd(timer=8, debug=False)
-    showWhichPage("loading")
-    eyes.setEyes("loading")
     sendFromPepper()
     reduce_noise(link)
     text = convert_wav_to_text('recordings/recording.wav')
@@ -63,6 +61,8 @@ def processQuery(query, responsesPipeline, eyes, state):
     currentState = deepcopy(state)
 
     topic, confident = classifyQuery(query)
+    print('QUERY CLASS: ', topic, confident)
+    
     if query[0]=="%":
         currentState["confusion"] = currentState["confusion"] + 1
         showWhichPage("confused")
