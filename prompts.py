@@ -103,13 +103,13 @@ noExamples = [
 ]
 
 yesExamples = [
-        "affirmative", "absolutely", "indeed", 
-        "certainly", "absolutely right", "correct", 
-        "that's true", "you bet", "precisely", 
-        "of course", "without a doubt", "sure thing", 
-        "definitely", "by all means", "yup",
-        "that's correct", "agreed", "positively", 
-        "true", "absolutely", "yes"
+    "affirmative", "absolutely", "indeed", 
+    "certainly", "absolutely right", "correct", 
+    "that's true", "you bet", "precisely", 
+    "of course", "without a doubt", "sure thing", 
+    "definitely", "by all means", "yup",
+    "that's correct", "agreed", "positively", 
+    "true", "absolutely", "yes"
 ]
 
 nextTopicPrompts = [
@@ -118,4 +118,16 @@ nextTopicPrompts = [
     "Do you have any other questions?",
     "Is there something else on your mind?", 
     "Are there additional topics you'd like to explore?"
+]
+
+accommodationKeywordExamples = [
+    "accommodation", "lodging","live","rent","room","res","resident","residential"
+]
+
+activitiesKeywordExamples = [
+    "activity", "activities","club","clubs","organization","extracurricular","society","union"
+]
+
+coursesKeywordExamples = [
+    "course", "bachelor","master","masters","certificate","diploma","horse","hourses", "courses", "degree"
 ]
