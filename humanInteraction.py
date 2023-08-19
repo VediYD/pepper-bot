@@ -35,6 +35,8 @@ def listen(eyes):
     showWhichPage("listening")
     eyes.setEyes("listening")
     record_audio_sd(timer=8, debug=False)
+    showWhichPage("loading")
+    eyes.setEyes("loading")
     sendFromPepper()
     reduce_noise(link)
     text = convert_wav_to_text('recordings/recording.wav')
@@ -54,8 +56,8 @@ def shush():
     
 def processQuery(query, responsesPipeline, eyes, state):
     """state = processQuery(query, responsesPipeline, eyes, state)"""
-    showWhichPage("loading")
-    eyes.setEyes("loading")
+    # showWhichPage("loading")
+    # eyes.setEyes("loading")
 
     previousTopic = state["topic"][:3]
     currentState = deepcopy(state)
@@ -102,49 +104,66 @@ def processQuery(query, responsesPipeline, eyes, state):
 #### micro-functions ####
 
 def verifyTopic(topic, eyes):
+    """verifyTopic(topic, eyes)"""
     speak(verificationPrompts[topic])
     text = listen(eyes)
     return isYes(text)
 
 def isYes(text):
+    """isYes(text)"""
     return any(synonym in text.lower() for synonym in yesExamples)
 
+# def topicSpecificOutput(eyes, query, responsesPipeline, topic): # if ABC
 def topicSpecificOutput(topic, query, responsesPipeline, eyes):
     """topicSpecificOutput(topic, query, responsesPipeline, eyes), where topic is one of Cgen, Cour, Cspe, Club, Cacc, Camp"""
     if topic[:4] == "Cgen": # "Gene":
+        # postCasualQuery(eyes, query, responsesPipeline) # if ABC
         postCasualQuery(query, responsesPipeline, eyes)
 
     elif topic[:4] == "Cour":
+        # repeat = coursesOutput(eyes, query, responsesPipeline) # if ABC
         repeat = coursesOutput(query, responsesPipeline, eyes)
         return repeat
 
     elif topic[:4] == "Cspe": # "Spec":
+        # repeat = specificCourseOutput(eyes, query, responsesPipeline) # if ABC
         repeat = specificCourseOutput(query, responsesPipeline, eyes)
         return repeat
 
     elif topic[:4] == "Club": # "Acti":
+        # topicHardOutput(eyes, "Club")
         topicHardOutput("Club", eyes)
 
     elif topic[:4] == "Cacc":
+        # topicHardOutput(eyes, "Cacc")
         topicHardOutput("Cacc", eyes)
 
     elif topic[:4] == "Camp":
+        # topicHardOutput(eyes, "Camp")
         topicHardOutput("Camp", eyes)
     return False
 
+# def topicHardOutput(eyes, topic): # if ABC
 def topicHardOutput(topic, eyes):
+    """topicHardOutput(topic, eyes)"""
     eyes.setEyes("neutral")
     showWhichPage(topic)
     speak(topicBlurb[topic])
 
+# def coursesOutput(eyes, query, responsesPipeline) # if ABC
 def coursesOutput(query, responsesPipeline, eyes):
+    """coursesOutput(quesy, responsesPipeline, eyes)"""
+    # repeat = queryCourseCodes(eyes, query, responsesPipeline) # if ABC
     repeat = queryCourseCodes(query, responsesPipeline, eyes)
     if not repeat:
         # Pause for users to read the tablet
         sleep(2)
     return repeat
 
+# def specificCourseOutput(eyes, query, responsesPipeline): # if ABC
 def specificCourseOutput(query, responsesPipeline, eyes):
+    """specificCourseOutput(query, responsesPipeline, eyes)"""
+    # repeat = querySpecificCourse(eyes, query, responsesPipeline): # if ABC
     repeat = querySpecificCourse(query, responsesPipeline, eyes)
     if not repeat:
         # Pause for users to read the tablet
