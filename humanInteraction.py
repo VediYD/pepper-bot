@@ -2,7 +2,7 @@
 from naoqi import ALProxy
 
 from prompts             import basicGreetings, basicTopicPrompts, yesExamples, verificationPrompts, confusionRepeat, tieredConfusionPrompts, topicBlurb
-from constants           import PEPPER_HOST, PEPPER_PORT
+from constants           import PEPPER_HOST, PEPPER_PORT, GPT_LINK
 from requests            import post
 from time                import time, sleep
 from random              import choice
@@ -24,7 +24,7 @@ import numpy as np
 ##########
 
 global link
-link = 'http://10.104.22.24:8891'
+link = GPT_LINK # 'http://10.104.22.24:8891'
 
 def detect(_idle):
     seePersonAndGreet(_idle)
@@ -61,6 +61,9 @@ def processQuery(query, responsesPipeline, eyes, state):
 
     previousTopic = state["topic"][:4]
     currentState = deepcopy(state)
+
+    # hope that you don't need to repeat
+    currentState["repeat"] = False
 
     # If stt unsuccessful, no topic is predicted. 
     # Pepper declares error (ie "speak up"), then repeat 
@@ -99,6 +102,14 @@ def processQuery(query, responsesPipeline, eyes, state):
         currentState["topic"] = topic
 
     return currentState
+
+def promptForNextQuery():
+    # speak(nextQueryPrompts())
+    # choice(basicTopicPrompts)
+    pass
+
+def sayGoodbye():
+    pass
 
 
 ################################################################################

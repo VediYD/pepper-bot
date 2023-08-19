@@ -55,6 +55,7 @@ GPT_HOST = "10.104.23.208"
 PEPPER_HOST = "10.104.23.185"
 GPT_PORT = 8891
 PEPPER_PORT = 9559
+GPT_LINK = "http://10.104.23.130:8891" # 'http://10.104.22.24:8891'
 
 ### Audio Processing Constants ###
 PEPPER_RECORDINGS_PATH = "/home/nao/microphones/recording.wav"
