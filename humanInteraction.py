@@ -59,7 +59,7 @@ def processQuery(query, responsesPipeline, eyes, state):
     # showWhichPage("loading")
     # eyes.setEyes("loading")
 
-    previousTopic = state["topic"][:3]
+    previousTopic = state["topic"][:4]
     currentState = deepcopy(state)
 
     # If stt unsuccessful, no topic is predicted. 
@@ -77,12 +77,12 @@ def processQuery(query, responsesPipeline, eyes, state):
         topic, confident = classifyQuery(query)
         print('QUERY CLASS: ', topic, confident)
 
-        if topic[:3] in ["Cacc", "Club", "Camp"] and not confident: # ["Acco", "Acti", "Camp"]
+        if topic[:4] in ["Cacc", "Club", "Camp"] and not confident: # ["Acco", "Acti", "Camp"]
             # only confirm if topic one of "Acco", "Acti", "Camp"
             confident = verifyTopic(topic, eyes)
-        if confident or topic[:3] in ["Cour", "Cspe", "Cgen"]: # ["Cour", "Spec", "Gene"]:
+        if confident or topic[:4] in ["Cour", "Cspe", "Cgen"]: # ["Cour", "Spec", "Gene"]:
             #do topic
-            if topic[:3] == "Cour" and previousTopic=="Cour": 
+            if topic[:4] == "Cour" and previousTopic=="Cour": 
                 topic = "Cspe"
             errored = topicSpecificOutput(topic, query, responsesPipeline, eyes)
             if errored:
