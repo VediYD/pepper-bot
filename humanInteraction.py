@@ -63,6 +63,8 @@ def processQuery(query, responsesPipeline, eyes, state):
     topic, confident = classifyQuery(query)
     print('QUERY CLASS: ', topic, confident)
     
+    # we should move classification after error check - YV
+    
     if query[0]=="%":
         currentState["confusion"] = currentState["confusion"] + 1
         showWhichPage("confused")
