@@ -95,24 +95,6 @@ def processQuery(query, responsesPipeline, eyes, state):
             speak(confusionRepeat[1])
             currentState["repeat"] = True
         currentState["topic"] = topic
-    
-    # if previousTopic=="Cour":
-    #     # then process as deeper course query
-    #     pass
-    # else: 
-        # topic, confident = classifyQuery(query, eyes)
-        # if not confident:
-        #     # only confirm if topic one of "Cour", "Acco", "Acti", "Camp"
-        #     confident = verifyTopic(topic, eyes)
-        # if confident:
-        #     #do topic
-        #     topicSpecificOutput(topic, eyes)
-        # else:
-        #     currentState["confusion"] = currentState["confusion"] + 1
-        #     showWhichPage("confused")
-        #     eyes.setEyes("confused")
-        #     speak(confusionRepeat[1])
-        #     currentState["repeat"] = True
 
     return currentState
 
