@@ -1,7 +1,7 @@
 # from urllib import response
 from naoqi import ALProxy
 
-from prompts             import basicGreetings, basicTopicPrompts, yesExamples, verificationPrompts, confusionRepeat, tieredConfusionPrompts, topicBlurb
+from prompts             import basicGreetings, basicTopicPrompts, yesExamples, verificationPrompts, confusionRepeat, tieredConfusionPrompts, topicBlurb, goodbyePrompts, nextTopicPrompts
 from constants           import PEPPER_HOST, PEPPER_PORT, GPT_LINK
 from requests            import post
 from time                import time, sleep
@@ -104,12 +104,14 @@ def processQuery(query, responsesPipeline, eyes, state):
     return currentState
 
 def promptForNextQuery():
-    # speak(nextQueryPrompts())
-    # choice(basicTopicPrompts)
-    pass
+    """just speaks next query prompts"""
+    speak(choice(nextTopicPrompts))
+    
 
 def sayGoodbye():
-    pass
+    """just speaks goodbye prompts"""
+    speak(choice(goodbyePrompts))
+    
 
 
 ################################################################################
