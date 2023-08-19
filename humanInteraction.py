@@ -382,15 +382,15 @@ def classifyQuery(query, threshold=0.8):
         # queryIsAudible = response.json()['abv_thresh'] # errored 
         
         # refactor label to topic codes
-        if label[:3] == "Acco":
+        if label[:4] == "Acco":
             label = "Cacc"
-        elif label[:3] == "Cour":
+        elif label[:4] == "Cour":
             label = "Cour"
-        elif label[:3] == "Acti":
+        elif label[:4] == "Acti":
             label = "Club"
-        elif label[:3] == "Camp":
+        elif label[:4] == "Camp":
             label = "Camp"
-        elif label[:3] == "Gene":
+        elif label[:4] == "Gene":
             label = "Cgen"
 
     return label, thresh #, abv_thresh
