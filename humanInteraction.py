@@ -68,10 +68,12 @@ def processQuery(query, responsesPipeline, eyes, state):
     # If stt unsuccessful, no topic is predicted. 
     # Pepper declares error (ie "speak up"), then repeat 
     if query[0]=="%":
-        currentState["confusion"] = currentState["confusion"] + 1
-        showWhichPage("confused")
-        eyes.setEyes("confused")
-        speak(tieredConfusionPrompts[state["confusion"]])
+    
+        currentState["confusion"] = expressConfusion(state["confusion"], eyes)
+        # currentState["confusion"] = currentState["confusion"] + 1
+        # showWhichPage("confused")
+        # eyes.setEyes("confused")
+        # speak(tieredConfusionPrompts[state["confusion"]])
         currentState["repeat"] = True
         currentState["topic"] = "%error%"
 
@@ -80,28 +82,54 @@ def processQuery(query, responsesPipeline, eyes, state):
         topic, confident = classifyQuery(query)
         print('QUERY CLASS: ', topic, confident)
 
+        if topic[0]=="%":
+            currentState["confusion"] = expressConfusion(state["confusion"], eyes)
+            # currentState["confusion"] = currentState["confusion"] + 1
+            # showWhichPage("confused")
+            # eyes.setEyes("confused")
+            # speak(tieredConfusionPrompts[state["confusion"]])
+            currentState["repeat"] = True
+            currentState["topic"] = "%error%"
+
         if topic[:4] in ["Cacc", "Club", "Camp"] and not confident: # ["Acco", "Acti", "Camp"]
             # only confirm if topic one of "Acco", "Acti", "Camp"
             confident = verifyTopic(topic, eyes)
+
         if confident or topic[:4] in ["Cour", "Cspe", "Cgen"]: # ["Cour", "Spec", "Gene"]:
             #do topic
             if topic[:4] == "Cour" and previousTopic=="Cour": 
                 topic = "Cspe"
             errored = topicSpecificOutput(topic, query, responsesPipeline, eyes)
+            # only "Cour" and "Cspe" return errored
             if errored:
                 currentState["repeat"] = True
-                currentState["confusion"] = currentState["confusion"] + 1
+                if topic == "Cspe":
+                    currentState["confusion"] = expressConfusion(state["confusion"], eyes)
+                elif topic == "Cour": 
+                    currentState["confusion"] = currentState["confusion"] + 1
+                # showWhichPage("confused")
+                # eyes.setEyes("confused")
+                # speak(tieredConfusionPrompts[state["confusion"]])
+                
+                # currentState["confusion"] = currentState["confusion"] + 1
 
         else:
             # express confusion
-            currentState["confusion"] = currentState["confusion"] + 1
-            showWhichPage("confused")
-            eyes.setEyes("confused")
-            speak(confusionRepeat[1])
+            # currentState["confusion"] = currentState["confusion"] + 1
+            # showWhichPage("confused")
+            # eyes.setEyes("confused")
+            # speak(confusionRepeat[1])
+            currentState["confusion"] = expressConfusion(state["confusion"], eyes)
             currentState["repeat"] = True
         currentState["topic"] = topic
 
     return currentState
+
+def expressConfusion(confusionLevel, eyes):
+    showWhichPage("confused")
+    eyes.setEyes("confused")
+    speak(tieredConfusionPrompts[confusionLevel])
+    return confusionLevel + 1
 
 def promptForNextQuery():
     """just speaks next query prompts"""
@@ -304,7 +332,7 @@ def convert_wav_to_text(audio_path, engine='google'):
         print(e)
         return '%low_volume_error%'
     
-# no
+
 # def check_lowvol(_ques):
 #     if _ques=='%low_volume_error%':
 #         print('Low volume error reached')
@@ -495,7 +523,8 @@ def postQuerySpecificCourse(_question, sentences, eyes):
         speak(course_summary) # say the summary for the first (these should be the same course, but need to confirm how the query function works!)
         return False
     else:
-        True
+        # handle error on the other end (if topic is "Cspe")
+        return True
 #         if rcnt < 4:
 #             speak('Sorry could you please repeat that?')
 #             return True
@@ -583,17 +612,17 @@ def say_sentences_thread(sentences):
 
 
 def queryCourseCodes(query, responsesPipeline, eyes):
-    eyes.setEyes("loading")
+    # eyes.setEyes("loading")
     # showWhichPage("loading")
     # queryCourseCodes returns "repeat" = true if the query search is not successful
     repeat = postQueryCourseCodes(query, responsesPipeline, eyes)
-    eyes.setEyes("neutral")
+    # eyes.setEyes("neutral")
     return repeat
 
 
 def querySpecificCourse(query, responsesPipeline, eyes):
-    eyes.setEyes("loading")
+    # eyes.setEyes("loading")
     # queryCourseCodes returns "repeat" = true if the query search is not successful
     repeat = postQuerySpecificCourse(query, responsesPipeline, eyes)
-    eyes.setEyes("neutral")
+    # eyes.setEyes("neutral")
     return repeat
