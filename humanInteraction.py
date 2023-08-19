@@ -471,7 +471,7 @@ def postQueryCourseCodes(_question, sentences, eyes):
     else:
         showWhichPage("confused")
         eyes.setEyes("confused")
-        speak('I am unable to find any relevant courses for you.') # Can you please repeat your query?')
+        speak('I am unable to find any relevant courses for you. Can you please repeat your query?') # Can you please repeat your query?')
         return True
     
     
