@@ -110,24 +110,25 @@ def isYes(text):
     return any(synonym in text.lower() for synonym in yesExamples)
 
 def topicSpecificOutput(topic, query, responsesPipeline, eyes):
-    if topic[:3] == "Cgen": # "Gene":
+    """topicSpecificOutput(topic, query, responsesPipeline, eyes), where topic is one of Cgen, Cour, Cspe, Club, Cacc, Camp"""
+    if topic[:4] == "Cgen": # "Gene":
         postCasualQuery(query, responsesPipeline)
 
-    elif topic[:3] == "Cour":
+    elif topic[:4] == "Cour":
         repeat = coursesOutput(query, responsesPipeline, eyes)
         return repeat
 
-    elif topic[:3] == "Cspe": # "Spec":
+    elif topic[:4] == "Cspe": # "Spec":
         repeat = specificCourseOutput(query, responsesPipeline, eyes)
         return repeat
 
-    elif topic[:3] == "Club": # "Acti":
+    elif topic[:4] == "Club": # "Acti":
         topicHardOutput("Club", eyes)
 
-    elif topic[:3] == "Cacc":
+    elif topic[:4] == "Cacc":
         topicHardOutput("Cacc", eyes)
 
-    elif topic[:3] == "Camp":
+    elif topic[:4] == "Camp":
         topicHardOutput("Camp", eyes)
     return False
 
