@@ -27,27 +27,6 @@ import numpy as np
 global link
 link = GPT_LINK # 'http://10.104.22.24:8891'
 
-global atts
-atts = ALProxy("ALAnimatedSpeech", PEPPER_HOST, PEPPER_PORT)
-
-global tts
-tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
-
-global tracker
-tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
-
-global memory
-memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
-
-global face_detection
-face_detection = ALProxy("ALFaceDetection", PEPPER_HOST, PEPPER_PORT)
-
-global recorder
-recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
-    
-global sound_detector
-sound_detector = ALProxy("ALSoundDetection", PEPPER_HOST, PEPPER_PORT)
-
 ################################################################################
 ##### Function Handles
 ##########
@@ -72,19 +51,16 @@ def listen(eyes):
 
 
 def speak(text):
-    # tts = ALProxy("ALAnimatedSpeech", PEPPER_HOST, PEPPER_PORT)
+    tts = ALProxy("ALAnimatedSpeech", PEPPER_HOST, PEPPER_PORT)
     atts.say('^mode(contextual) ' + text + ' ^mode(disabled)')
 
     
 def shush():
-    # tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
+    tts = ALProxy("ALTextToSpeech", PEPPER_HOST, PEPPER_PORT)
     tts.stopAll()
     
 def processQuery(query, responsesPipeline, eyes, state):
     """state = processQuery(query, responsesPipeline, eyes, state)"""
-    # showWhichPage("loading")
-    # eyes.setEyes("loading")
-
     previousTopic = state["topic"][:4]
     currentState = deepcopy(state)
 
@@ -96,10 +72,6 @@ def processQuery(query, responsesPipeline, eyes, state):
     if query[0]=="%":
     
         currentState["confusion"] = expressConfusion(state["confusion"], eyes)
-        # currentState["confusion"] = currentState["confusion"] + 1
-        # showWhichPage("confused")
-        # eyes.setEyes("confused")
-        # speak(tieredConfusionPrompts[state["confusion"]])
         currentState["repeat"] = True
         currentState["topic"] = "%error%"
 
@@ -110,10 +82,6 @@ def processQuery(query, responsesPipeline, eyes, state):
 
         if topic[0]=="%":
             currentState["confusion"] = expressConfusion(state["confusion"], eyes)
-            # currentState["confusion"] = currentState["confusion"] + 1
-            # showWhichPage("confused")
-            # eyes.setEyes("confused")
-            # speak(tieredConfusionPrompts[state["confusion"]])
             currentState["repeat"] = True
             currentState["topic"] = "%error%"
 
@@ -123,7 +91,7 @@ def processQuery(query, responsesPipeline, eyes, state):
 
         if confident or topic[:4] in ["Cour", "Cspe", "Cgen"]: # ["Cour", "Spec", "Gene"]:
             #do topic
-            if topic[:4] == "Cour" and previousTopic=="Cour": 
+            if topic[:4] == "Cour" and (previousTopic=="Cour" or previousTopic=="Cspe"): 
                 topic = "Cspe"
             errored = topicSpecificOutput(topic, query, responsesPipeline, eyes)
             # only "Cour" and "Cspe" return errored
@@ -133,18 +101,9 @@ def processQuery(query, responsesPipeline, eyes, state):
                     currentState["confusion"] = expressConfusion(state["confusion"], eyes)
                 elif topic == "Cour": 
                     currentState["confusion"] = currentState["confusion"] + 1
-                # showWhichPage("confused")
-                # eyes.setEyes("confused")
-                # speak(tieredConfusionPrompts[state["confusion"]])
-                
-                # currentState["confusion"] = currentState["confusion"] + 1
 
         else:
             # express confusion
-            # currentState["confusion"] = currentState["confusion"] + 1
-            # showWhichPage("confused")
-            # eyes.setEyes("confused")
-            # speak(confusionRepeat[1])
             currentState["confusion"] = expressConfusion(state["confusion"], eyes)
             currentState["repeat"] = True
         currentState["topic"] = topic
@@ -160,7 +119,6 @@ def expressConfusion(confusionLevel, eyes):
 def promptForNextQuery():
     """just speaks next query prompts"""
     speak(choice(nextTopicPrompts))
-    
 
 def sayGoodbye():
     """just speaks goodbye prompts"""
@@ -173,7 +131,7 @@ def sayGoodbye():
 ##########
 
 def faceTracker():
-    # tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
+    tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
     tracker.registerTarget("Face", 0.1)
     tracker.setMode("Head")
     tracker.track("Face")
@@ -182,9 +140,9 @@ def faceTracker():
 
 def seePersonAndGreet(_idle):
     # Imports
-    # memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
-    # tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
-    # face_detection = ALProxy("ALFaceDetection", PEPPER_HOST, PEPPER_PORT)
+    memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
+    tracker = ALProxy("ALTracker", PEPPER_HOST, PEPPER_PORT)
+    face_detection = ALProxy("ALFaceDetection", PEPPER_HOST, PEPPER_PORT)
 
     face_detection.subscribe("FaceDetection")
     tracker.registerTarget("Face", 0.1)
@@ -241,9 +199,9 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
     path_name = path_join(path_name)
 
     # Create Connection Proxies
-    # recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
-    # sound_detector = ALProxy("ALSoundDetection", PEPPER_HOST, PEPPER_PORT)
-    # memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
+    recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
+    sound_detector = ALProxy("ALSoundDetection", PEPPER_HOST, PEPPER_PORT)
+    memory = ALProxy("ALMemory", PEPPER_HOST, PEPPER_PORT)
     
     sound_detector.subscribe("sound_detector")
     sound_detector.setParameter("Sensitivity", 0.9)
@@ -306,7 +264,7 @@ def record_audio_sd(timer=None, path_name="/home/nao/microphones/recording.wav",
 
             
 def stopListening():
-    # recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
+    recorder = ALProxy("ALAudioRecorder", PEPPER_HOST, PEPPER_PORT)
     recorder.stopMicrophonesRecording()
 
 
@@ -378,47 +336,45 @@ def classifyQuery(query, threshold=0.8):
     """classifyQuery(query, threshold=0.8)"""
     if query == "%low_volume_error%":
         return query, False # use query as error
-    elif any(synonym in query.lower() for synonym in accommodationKeywordExamples):
-        return "Cacc", True #, abv_thresh
+
+    # try to find a hard word match to avoid using a classification model
     elif any(synonym in query.lower() for synonym in coursesKeywordExamples):
         return "Cour", True
+    elif any(synonym in query.lower() for synonym in accommodationKeywordExamples):
+        return "Cacc", True 
     elif any(synonym in query.lower() for synonym in activitiesKeywordExamples):
         return "Club", True
-    else:     
-        # prepare post data
-        url = link + '/classifyResponse'
-        data = {"sentence": query, "threshold": threshold}
 
-        # send data to ???
-        response = post(url, json=data)
+    # if none found, then try the classification model: (currently retracted due to issues)
+    # else:     
+    #     # prepare post data
+    #     url = link + '/classifyResponse'
+    #     data = {"sentence": query, "threshold": threshold}
 
-        # set data
-        thresh = response.json()['abv_thresh'] # errored 
-        label = response.json()['label'] # predicted class
+    #     # send data to ???
+    #     response = post(url, json=data)
 
-        # # If query audible, then
-        # if queryIsAudible:
-        #     label = response.json()['label'] # predicted class
-        # else:
-        #     label = "%low_confidence_error%" # error message instead
-        # # retrieve outputs from response (pred_class, thresh)
-        # label = response.json()['label'] # predicted class
-        # queryIsAudible = response.json()['abv_thresh'] # errored 
-        
-        # refactor label to topic codes
-        if label[:4] == "Acco":
-            label = "Cacc"
-        elif label[:4] == "Cour":
-            label = "Cour"
-        elif label[:4] == "Acti":
-            label = "Club"
-        elif label[:4] == "Camp":
-            label = "Camp"
-        elif label[:4] == "Gene":
-            label = "Cgen"
+    #     # set data
+    #     thresh = response.json()['abv_thresh'] # errored 
+    #     label = response.json()['label'] # predicted class
 
-    return label, thresh #, abv_thresh
+    #     # refactor label to topic codes (always)
+    #     if label[:4] == "Acco":
+    #         label = "Cacc"
+    #     elif label[:4] == "Cour":
+    #         label = "Cour"
+    #     elif label[:4] == "Acti":
+    #         label = "Club"
+    #     elif label[:4] == "Camp":
+    #         label = "Camp"
+    #     elif label[:4] == "Gene":
+    #         label = "Cgen"
 
+    else: 
+        label = "Cour"
+        thresh = True
+
+    return label, thresh 
 
 def verifyTopic(topic, eyes):
     """verifyTopic(topic, eyes)"""
@@ -439,12 +395,14 @@ def topicSpecificOutput(topic, query, responsesPipeline, eyes):
 
     elif topic[:4] == "Cour":
         # repeat = coursesOutput(eyes, query, responsesPipeline) # if ABC
-        repeat = coursesOutput(query, responsesPipeline, eyes)
+        # repeat = coursesOutput(query, responsesPipeline, eyes)
+        repeat = postQueryCourseCodes(query, responsesPipeline, eyes)
         return repeat
 
     elif topic[:4] == "Cspe": # "Spec":
         # repeat = specificCourseOutput(eyes, query, responsesPipeline) # if ABC
-        repeat = specificCourseOutput(query, responsesPipeline, eyes)
+        # repeat = specificCourseOutput(query, responsesPipeline, eyes)
+        repeat = postQuerySpecificCourse(query, responsesPipeline, eyes)
         return repeat
 
     elif topic[:4] == "Club": # "Acti":
@@ -467,25 +425,6 @@ def topicHardOutput(topic, eyes):
     showWhichPage(topic)
     speak(topicBlurb[topic])
 
-# def coursesOutput(eyes, query, responsesPipeline) # if ABC
-def coursesOutput(query, responsesPipeline, eyes):
-    """coursesOutput(quesy, responsesPipeline, eyes)"""
-    # repeat = queryCourseCodes(eyes, query, responsesPipeline) # if ABC
-    repeat = queryCourseCodes(query, responsesPipeline, eyes)
-    if not repeat:
-        # Pause for users to read the tablet
-        sleep(2)
-    return repeat
-
-# def specificCourseOutput(eyes, query, responsesPipeline): # if ABC
-def specificCourseOutput(query, responsesPipeline, eyes):
-    """specificCourseOutput(query, responsesPipeline, eyes)"""
-    # repeat = querySpecificCourse(eyes, query, responsesPipeline): # if ABC
-    repeat = querySpecificCourse(query, responsesPipeline, eyes)
-    if not repeat:
-        # Pause for users to read the tablet
-        sleep(5)
-    return repeat
 
 
 
@@ -495,6 +434,63 @@ def specificCourseOutput(query, responsesPipeline, eyes):
 ################################################################################
 ##### GPT text reciever
 ##########
+
+
+### "Cour" functions
+
+
+
+# def coursesOutput(eyes, query, responsesPipeline) # if ABC
+# def coursesOutput(query, responsesPipeline, eyes):
+#     """coursesOutput(quesy, responsesPipeline, eyes)"""
+#     # repeat = queryCourseCodes(eyes, query, responsesPipeline) # if ABC
+#     # repeat = queryCourseCodes(query, responsesPipeline, eyes) # old line
+#     repeat = postQueryCourseCodes(query, responsesPipeline, eyes) # combine functions
+#     # if not repeat: # now embedded in the actual function
+#     #     # Pause for users to read the tablet
+#     #     sleep(2)
+#     return repeat
+
+
+
+### "Cspe" functions
+
+
+
+# # def specificCourseOutput(eyes, query, responsesPipeline): # if ABC
+# def specificCourseOutput(query, responsesPipeline, eyes):
+#     """specificCourseOutput(query, responsesPipeline, eyes)"""
+#     # repeat = querySpecificCourse(eyes, query, responsesPipeline): # if ABC
+#     # repeat = querySpecificCourse(query, responsesPipeline, eyes) # old line
+#     repeat = postQuerySpecificCourse(query, responsesPipeline, eyes) # combine functions
+#     if not repeat: # now embedded in the actual function
+#         # Pause for users to read the tablet
+#         sleep(5)
+#     return repeat
+
+
+
+
+
+
+# def queryCourseCodes(query, responsesPipeline, eyes):
+#     # eyes.setEyes("loading")
+#     # showWhichPage("loading")
+#     # queryCourseCodes returns "repeat" = true if the query search is not successful
+#     repeat = postQueryCourseCodes(query, responsesPipeline, eyes)
+#     # eyes.setEyes("neutral")
+#     return repeat
+
+
+# def querySpecificCourse(query, responsesPipeline, eyes):
+#     # eyes.setEyes("loading")
+#     # queryCourseCodes returns "repeat" = true if the query search is not successful
+#     repeat = postQuerySpecificCourse(query, responsesPipeline, eyes)
+#     # eyes.setEyes("neutral")
+#     return repeat
+
+
+
 
 
 def postQueryCourseCodes(_question, sentences, eyes):
@@ -526,6 +522,7 @@ def postQueryCourseCodes(_question, sentences, eyes):
             speak('I have found {} courses for you.'.format(len(course_codes)))
             speak('Here are a few that you might find interesting.')
             speak(str(', '.join(course_names[:3])))
+            sleep(2)
             speak('Do you wanna know more about a specific course?')
         return False
     else:
@@ -535,6 +532,9 @@ def postQueryCourseCodes(_question, sentences, eyes):
         return True
     
     
+
+
+
 def postQuerySpecificCourse(_question, sentences, eyes):
     """postQuerySpecificCourse(_question, sentences, eyes)"""
     # _lowvol = check_lowvol(_question)
@@ -553,17 +553,15 @@ def postQuerySpecificCourse(_question, sentences, eyes):
         generateBasicQRPage(course_code) # show the QR page for the first
         showPage()
         speak(course_summary) # say the summary for the first (these should be the same course, but need to confirm how the query function works!)
+        sleep(5)
         return False
     else:
         # handle error on the other end (if topic is "Cspe")
         return True
-#         if rcnt < 4:
-#             speak('Sorry could you please repeat that?')
-#             return True
-#         else:
-# #             resetEyesAndTablet()
-#             speak('Sorry I am unable to understand. My processors might be running hot. I need some rest. But thank you for interacting with me.')
-#             return False
+
+
+
+
     
 def postCasualQuery(_question, sentences, eyes):    
     # define the link to the casual query to gpt
@@ -641,20 +639,3 @@ def say_sentences_thread(sentences):
                 sleep(1)  # do nothing
             continue
 
-
-
-def queryCourseCodes(query, responsesPipeline, eyes):
-    # eyes.setEyes("loading")
-    # showWhichPage("loading")
-    # queryCourseCodes returns "repeat" = true if the query search is not successful
-    repeat = postQueryCourseCodes(query, responsesPipeline, eyes)
-    # eyes.setEyes("neutral")
-    return repeat
-
-
-def querySpecificCourse(query, responsesPipeline, eyes):
-    # eyes.setEyes("loading")
-    # queryCourseCodes returns "repeat" = true if the query search is not successful
-    repeat = postQuerySpecificCourse(query, responsesPipeline, eyes)
-    # eyes.setEyes("neutral")
-    return repeat
