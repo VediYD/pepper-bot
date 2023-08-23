@@ -29,6 +29,10 @@ share/python-wheels/
 MANIFEST
 recordings/Data Collection
 
+# GPT-Model
+ggml-gpt4all-j-v1.3-groovy.bin
+.chroma
+
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
