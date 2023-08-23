@@ -74,7 +74,7 @@ class EyesController(object):
     def __init__(self):
         # self.thinking = True
         self.leds = ALProxy("ALLeds", PEPPER_HOST, PEPPER_PORT)
-        self.leds = leds
+        # self.leds = leds
         self.colourList = {
             "listening": [0, 0.49, 0.60],     # teal
             "confused" : [0.78, 0.26, 0.60],  # magenta

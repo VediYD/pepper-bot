@@ -51,7 +51,7 @@ def listen(eyes):
 
 
 def speak(text):
-    tts = ALProxy("ALAnimatedSpeech", PEPPER_HOST, PEPPER_PORT)
+    atts = ALProxy("ALAnimatedSpeech", PEPPER_HOST, PEPPER_PORT)
     atts.say('^mode(contextual) ' + text + ' ^mode(disabled)')
 
     
