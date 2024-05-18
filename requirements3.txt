@@ -1,0 +1,10 @@
+gpt4all==0.2.3
+langchain==0.0.174
+chromadb==0.3.25
+tensorflow==2.13.0
+flask==2.3.2
+pandas==2.0.2
+spacy==3.5.3
+scipy==1.11.1
+noisereduce==2.0.1
+sentence_transformers==2.2.2
