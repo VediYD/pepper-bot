@@ -58,7 +58,7 @@ responses = []
 to_send = []
 llm_done = False
 
-model_path = '/app/ggml-gpt4all-j-v1.3-groovy.bin'
+model_path = '/app/gpt/ggml-gpt4all-j-v1.3-groovy.bin'
 llm = GPT4All(model=model_path, verbose=False, n_threads=8, temp=0.5, streaming=False, use_mlock=True)
 llm.client.model._response_callback = _callback
 
