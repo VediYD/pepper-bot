@@ -1,3 +1,7 @@
+.idea/
+*.wav
+.chroma/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -24,7 +28,13 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
+
+recordings/Data Collection
+
+# GPT-Model
+ggml-gpt4all-j-v1.3-groovy.bin
+.chroma
+recordings
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -50,6 +60,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+.vscodes
 
 # Translations
 *.mo
@@ -152,9 +163,13 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# Conversation Classification Dataset
+Model/response.xlsx
+
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+ggml-gpt4all-j-v1.3-groovy.bin
